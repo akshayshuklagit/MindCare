@@ -1,0 +1,207 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard - MindCare{% endblock %}
+
+{% block content %}
+<div class="gradient-bg py-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-8">
+            <h1 class="text-4xl font-bold text-gray-800 mb-2">Welcome back, {{ user.get_full_name|default:user.username }}!</h1>
+            <p class="text-gray-600">Here's your mental wellness overview</p>
+        </div>
+    
+        <!-- Quick Stats -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+            <div class="bg-white rounded-xl shadow-sm p-6 text-center card-hover">
+                <div class="bg-blue-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-chart-line text-blue-600 text-2xl"></i>
+                </div>
+                <h3 class="text-lg font-semibold text-gray-800">Mood Streak</h3>
+                <p class="text-2xl font-bold text-blue-500">{{ mood_streak }} days</p>
+            </div>
+            <div class="bg-white rounded-xl shadow-sm p-6 text-center card-hover">
+                <div class="bg-green-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-bullseye text-green-600 text-2xl"></i>
+                </div>
+                <h3 class="text-lg font-semibold text-gray-800">Active Goals</h3>
+                <p class="text-2xl font-bold text-green-500">{{ active_goals.count }}</p>
+            </div>
+            <div class="bg-white rounded-xl shadow-sm p-6 text-center card-hover">
+                <div class="bg-purple-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-smile text-purple-600 text-2xl"></i>
+                </div>
+                <h3 class="text-lg font-semibold text-gray-800">Recent Moods</h3>
+                <p class="text-2xl font-bold text-purple-500">{{ recent_moods.count }}</p>
+            </div>
+            <div class="bg-white rounded-xl shadow-sm p-6 text-center card-hover">
+                <div class="bg-orange-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-brain text-orange-600 text-2xl"></i>
+                </div>
+                <h3 class="text-lg font-semibold text-gray-800">Assessments</h3>
+                <p class="text-2xl font-bold text-orange-500">{{ recent_assessments.count }}</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    
+    <!-- Main Content Grid -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        
+        <!-- Daily Quote -->
+        {% if daily_quote %}
+        <div class="bg-white rounded-xl shadow-sm p-6 card-hover">
+            <h2 class="text-xl font-semibold mb-4 flex items-center">
+                <i class="fas fa-quote-left text-purple-500 mr-2"></i>Quote of the Day
+            </h2>
+            <blockquote class="text-lg italic mb-4">"{{ daily_quote.text }}"</blockquote>
+            {% if daily_quote.author %}
+                <cite class="text-gray-600">— {{ daily_quote.author }}</cite>
+            {% endif %}
+
+        </div>
+        {% endif %}
+        
+        <!-- Recent Mood Entries -->
+        <div class="bg-white rounded-xl shadow-sm p-6 card-hover">
+            <h2 class="text-xl font-semibold mb-4 flex items-center">
+                <i class="fas fa-chart-line text-blue-500 mr-2"></i>Recent Moods
+            </h2>
+            {% if recent_moods %}
+                <div class="space-y-3">
+                    {% for mood in recent_moods %}
+                        <div class="flex justify-between items-center p-3 bg-gray-50 rounded">
+                            <div>
+                                <span class="font-medium">{{ mood.date }}</span>
+                                <span class="text-gray-600 ml-2">{{ mood.get_mood_rating_display }}</span>
+                            </div>
+                            <div class="text-2xl">
+                                {% if mood.mood_rating == 1 %}😢
+                                {% elif mood.mood_rating == 2 %}😕
+                                {% elif mood.mood_rating == 3 %}😐
+                                {% elif mood.mood_rating == 4 %}😊
+                                {% else %}😄
+                                {% endif %}
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p class="text-gray-600">No mood entries yet.</p>
+            {% endif %}
+            <div class="mt-4">
+                <a href="{% url 'mood_tracker:home' %}" class="text-blue-500 hover:text-blue-700">
+                    Go to Mood Tracker →
+                </a>
+            </div>
+        </div>
+        
+        <!-- Active Goals -->
+        <div class="bg-white rounded-xl shadow-sm p-6 card-hover">
+            <h2 class="text-xl font-semibold mb-4 flex items-center">
+                <i class="fas fa-bullseye text-green-500 mr-2"></i>Active Goals
+            </h2>
+            {% if active_goals %}
+                <div class="space-y-4">
+                    {% for goal in active_goals|slice:":3" %}
+                        <div class="border-l-4 border-blue-500 pl-4">
+                            <h3 class="font-medium">{{ goal.title }}</h3>
+                            <div class="flex items-center mt-2">
+                                <div class="flex-1 bg-gray-200 rounded-full h-2">
+                                    <div class="bg-blue-500 h-2 rounded-full" 
+                                         style="width: {{ goal.progress_percentage }}%"></div>
+                                </div>
+                                <span class="ml-2 text-sm text-gray-600">
+                                    {{ goal.current_progress }}/{{ goal.target_value }}
+                                </span>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p class="text-gray-600">No active goals. Create your first goal!</p>
+            {% endif %}
+            <div class="mt-4">
+                <a href="{% url 'dashboard:goals' %}" class="text-blue-500 hover:text-blue-700">
+                    Manage Goals →
+                </a>
+            </div>
+        </div>
+        
+        <!-- Recent Assessments -->
+        <div class="bg-white rounded-xl shadow-sm p-6 card-hover">
+            <h2 class="text-xl font-semibold mb-4 flex items-center">
+                <i class="fas fa-brain text-orange-500 mr-2"></i>Recent Assessments
+            </h2>
+            {% if recent_assessments %}
+                <div class="space-y-3">
+                    {% for assessment in recent_assessments %}
+                        <div class="flex justify-between items-center p-3 bg-gray-50 rounded">
+                            <div>
+                                <span class="font-medium">{{ assessment.assessment_type.name }}</span>
+                                <div class="text-sm text-gray-600">{{ assessment.completed_at|date:"M d, Y" }}</div>
+                            </div>
+                            <span class="px-2 py-1 rounded text-sm
+                                {% if assessment.severity_level == 'Minimal' %}bg-green-100 text-green-800
+                                {% elif assessment.severity_level == 'Mild' %}bg-yellow-100 text-yellow-800
+                                {% elif assessment.severity_level == 'Moderate' %}bg-orange-100 text-orange-800
+                                {% else %}bg-red-100 text-red-800
+                                {% endif %}">
+                                {{ assessment.severity_level }}
+                            </span>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p class="text-gray-600">No assessments completed yet.</p>
+            {% endif %}
+            <div class="mt-4">
+                <a href="{% url 'assessments:list' %}" class="text-blue-500 hover:text-blue-700">
+                    Take Assessment →
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Quick Actions -->
+    <div class="mt-8 bg-white rounded-xl shadow-sm p-6 card-hover">
+        <h2 class="text-xl font-semibold mb-6 flex items-center">
+            <i class="fas fa-bolt text-yellow-500 mr-2"></i>Quick Actions
+        </h2>
+        <div class="grid grid-cols-2 md:grid-cols-6 gap-4">
+            <a href="{% url 'mood_tracker:log' %}" 
+               class="bg-gradient-to-r from-blue-500 to-blue-600 text-white p-6 rounded-xl text-center hover:from-blue-600 hover:to-blue-700 transition card-hover">
+                <i class="fas fa-smile text-2xl mb-3 block"></i>
+                <div class="font-medium">Log Mood</div>
+            </a>
+            <a href="{% url 'assessments:list' %}" 
+               class="bg-gradient-to-r from-green-500 to-green-600 text-white p-6 rounded-xl text-center hover:from-green-600 hover:to-green-700 transition card-hover">
+                <i class="fas fa-clipboard-check text-2xl mb-3 block"></i>
+                <div class="font-medium">Take Assessment</div>
+            </a>
+            <a href="/breathing/" 
+               class="bg-gradient-to-r from-teal-500 to-teal-600 text-white p-6 rounded-xl text-center hover:from-teal-600 hover:to-teal-700 transition card-hover">
+                <i class="fas fa-wind text-2xl mb-3 block"></i>
+                <div class="font-medium">Breathing Exercise</div>
+            </a>
+            <a href="/coloring/" 
+               class="bg-gradient-to-r from-pink-500 to-pink-600 text-white p-6 rounded-xl text-center hover:from-pink-600 hover:to-pink-700 transition card-hover">
+                <i class="fas fa-palette text-2xl mb-3 block"></i>
+                <div class="font-medium">Mindful Coloring</div>
+            </a>
+            <a href="{% url 'core:gratitude_jar' %}" 
+               class="bg-gradient-to-r from-purple-500 to-purple-600 text-white p-6 rounded-xl text-center hover:from-purple-600 hover:to-purple-700 transition card-hover">
+                <i class="fas fa-heart text-2xl mb-3 block"></i>
+                <div class="font-medium">Gratitude Jar</div>
+            </a>
+            <a href="{% url 'dashboard:create_goal' %}" 
+               class="bg-gradient-to-r from-orange-500 to-orange-600 text-white p-6 rounded-xl text-center hover:from-orange-600 hover:to-orange-700 transition card-hover">
+                <i class="fas fa-bullseye text-2xl mb-3 block"></i>
+                <div class="font-medium">New Goal</div>
+            </a>
+        </div>
+    </div>
+</div>
+</div>
+{% endblock %}

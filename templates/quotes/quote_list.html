@@ -1,0 +1,99 @@
+{% extends 'base.html' %}
+
+{% block title %}Inspirational Quotes - MindCare{% endblock %}
+
+{% block content %}
+<div class="gradient-bg py-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <h1 class="text-4xl font-bold text-gray-800 mb-2">Inspirational Quotes</h1>
+        <p class="text-gray-600 mb-8">Find wisdom and peace through timeless teachings</p>
+    </div>
+</div>
+
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    
+    <!-- Category Filter -->
+    <div class="mb-8">
+        <h2 class="text-xl font-semibold text-gray-800 mb-4 text-center">Browse by Category</h2>
+        <div class="flex flex-wrap gap-3 justify-center">
+            <a href="{% url 'quotes:list' %}" 
+               class="px-6 py-3 rounded-lg transition card-hover {% if not selected_category %}bg-purple-500 text-white{% else %}bg-white text-gray-700 border border-gray-200 hover:border-purple-300{% endif %}">
+                <i class="fas fa-list mr-2"></i>All
+            </a>
+            {% for value, label in categories %}
+                <a href="?category={{ value }}" 
+                   class="px-6 py-3 rounded-lg transition card-hover {% if selected_category == value %}bg-purple-500 text-white{% else %}bg-white text-gray-700 border border-gray-200 hover:border-purple-300{% endif %}">
+                    {% if value == 'motivation' %}<i class="fas fa-rocket mr-2"></i>
+                    {% elif value == 'mindfulness' %}<i class="fas fa-om mr-2"></i>
+                    {% elif value == 'anxiety' %}<i class="fas fa-leaf mr-2"></i>
+                    {% elif value == 'depression' %}<i class="fas fa-sun mr-2"></i>
+                    {% elif value == 'self_care' %}<i class="fas fa-heart mr-2"></i>
+                    {% elif value == 'positivity' %}<i class="fas fa-smile mr-2"></i>
+                    {% elif value == 'resilience' %}<i class="fas fa-mountain mr-2"></i>
+                    {% else %}<i class="fas fa-quote-left mr-2"></i>{% endif %}
+                    {{ label }}
+                </a>
+            {% endfor %}
+        </div>
+    </div>
+    
+    <!-- Quotes Grid -->
+    <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        {% for quote in quotes %}
+            <div class="bg-white rounded-xl shadow-sm p-6 card-hover">
+                <div class="text-purple-500 text-3xl mb-4">
+                    <i class="fas fa-quote-left"></i>
+                </div>
+                <blockquote class="text-gray-700 italic mb-4 leading-relaxed">{{ quote.text }}</blockquote>
+                {% if quote.author %}
+                    <cite class="text-gray-500 text-sm">— {{ quote.author }}</cite>
+                {% endif %}
+                <div class="mt-4 flex justify-between items-center">
+                    <span class="bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-sm font-medium">
+                        {% if quote.category == 'motivation' %}<i class="fas fa-rocket mr-1"></i>
+                        {% elif quote.category == 'mindfulness' %}<i class="fas fa-om mr-1"></i>
+                        {% elif quote.category == 'anxiety' %}<i class="fas fa-leaf mr-1"></i>
+                        {% elif quote.category == 'depression' %}<i class="fas fa-sun mr-1"></i>
+                        {% elif quote.category == 'self_care' %}<i class="fas fa-heart mr-1"></i>
+                        {% elif quote.category == 'positivity' %}<i class="fas fa-smile mr-1"></i>
+                        {% elif quote.category == 'resilience' %}<i class="fas fa-mountain mr-1"></i>
+                        {% endif %}
+                        {{ quote.get_category_display }}
+                    </span>
+                    {% if user.is_authenticated %}
+                        <button onclick="toggleFavorite({{ quote.id }})" 
+                                class="text-gray-400 hover:text-red-500 transition">
+                            <i class="fas fa-heart"></i>
+                        </button>
+                    {% endif %}
+                </div>
+            </div>
+        {% empty %}
+            <div class="col-span-full text-center py-12">
+                <div class="text-6xl mb-4 text-gray-300">
+                    <i class="fas fa-quote-left"></i>
+                </div>
+                <p class="text-gray-500 text-lg">No quotes found for this category.</p>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+</div>
+
+<script>
+function toggleFavorite(quoteId) {
+    fetch(`/quotes/toggle-favorite/${quoteId}/`, {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+            'Content-Type': 'application/json',
+        },
+    })
+    .then(response => response.json())
+    .then(data => {
+        // Update UI based on response
+        console.log('Favorite toggled:', data.is_favorite);
+    });
+}
+</script>
+{% endblock %}

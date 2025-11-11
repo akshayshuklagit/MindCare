@@ -1,0 +1,236 @@
+{% extends 'base.html' %}
+
+{% block title %}Assessment Results - {{ assessment.assessment_type.name }} - MindCare{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto">
+    <!-- Results Header -->
+    <div class="bg-white rounded-xl shadow-lg p-8 mb-8">
+        <div class="text-center">
+            <div class="w-20 h-20 mx-auto mb-4 rounded-full flex items-center justify-center
+                {% if guidance.color == 'green' %}bg-green-100{% elif guidance.color == 'yellow' %}bg-yellow-100{% elif guidance.color == 'orange' %}bg-orange-100{% else %}bg-red-100{% endif %}">
+                <i class="fas fa-chart-line text-3xl 
+                    {% if guidance.color == 'green' %}text-green-600{% elif guidance.color == 'yellow' %}text-yellow-600{% elif guidance.color == 'orange' %}text-orange-600{% else %}text-red-600{% endif %}"></i>
+            </div>
+            <h1 class="text-3xl font-bold text-gray-900 mb-2">Your Assessment Results</h1>
+            <p class="text-gray-600 mb-6">{{ assessment.assessment_type.name }} completed on {{ assessment.completed_at|date:"F d, Y" }}</p>
+            
+            <!-- Score Display -->
+            <div class="flex items-center justify-center space-x-8 mb-6">
+                <div class="text-center">
+                    <div class="text-4xl font-bold 
+                        {% if guidance.color == 'green' %}text-green-600{% elif guidance.color == 'yellow' %}text-yellow-600{% elif guidance.color == 'orange' %}text-orange-600{% else %}text-red-600{% endif %}">
+                        {{ assessment.total_score }}
+                    </div>
+                    <p class="text-gray-500 text-sm">out of {{ assessment.assessment_type.max_score }}</p>
+                </div>
+                <div class="text-center">
+                    <div class="px-4 py-2 rounded-full text-lg font-semibold
+                        {% if guidance.color == 'green' %}bg-green-100 text-green-800{% elif guidance.color == 'yellow' %}bg-yellow-100 text-yellow-800{% elif guidance.color == 'orange' %}bg-orange-100 text-orange-800{% else %}bg-red-100 text-red-800{% endif %}">
+                        {{ assessment.severity_level }}
+                    </div>
+                    <p class="text-gray-500 text-sm mt-1">Severity Level</p>
+                </div>
+            </div>
+            
+            <!-- Time Information -->
+            <p class="text-sm text-gray-500">Assessment completed in {{ assessment.time_taken.total_seconds|floatformat:0 }} seconds</p>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <!-- Main Results -->
+        <div class="lg:col-span-2 space-y-8">
+            <!-- Guidance -->
+            <div class="bg-white rounded-xl shadow-lg p-6">
+                <h2 class="text-xl font-semibold text-gray-900 mb-4">
+                    <i class="fas fa-compass text-blue-600 mr-2"></i>
+                    Understanding Your Results
+                </h2>
+                
+                <div class="mb-6">
+                    <h3 class="text-lg font-semibold mb-2 
+                        {% if guidance.color == 'green' %}text-green-800{% elif guidance.color == 'yellow' %}text-yellow-800{% elif guidance.color == 'orange' %}text-orange-800{% else %}text-red-800{% endif %}">
+                        {{ guidance.title }}
+                    </h3>
+                    <p class="text-gray-700 leading-relaxed">{{ guidance.message }}</p>
+                </div>
+
+                {% if guidance.recommendations %}
+                <div>
+                    <h4 class="font-semibold text-gray-900 mb-3">Recommended Actions:</h4>
+                    <ul class="space-y-2">
+                        {% for recommendation in guidance.recommendations %}
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-green-600 mr-2 mt-1"></i>
+                            <span class="text-gray-700">{{ recommendation }}</span>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% endif %}
+            </div>
+
+            {% if emergency_resources %}
+            <!-- Emergency Resources -->
+            <div class="bg-red-50 border-l-4 border-red-400 rounded-r-xl p-6">
+                <h2 class="text-xl font-semibold text-red-800 mb-4">
+                    <i class="fas fa-exclamation-triangle mr-2"></i>
+                    Immediate Support Available
+                </h2>
+                <p class="text-red-700 mb-4">Based on your results, we want to make sure you have access to immediate support resources.</p>
+                
+                <div class="space-y-3">
+                    {% for resource in emergency_resources %}
+                    <div class="bg-white rounded-lg p-4 border border-red-200">
+                        <h3 class="font-semibold text-gray-900">{{ resource.name }}</h3>
+                        <p class="text-lg font-bold text-red-600">{{ resource.phone_number }}</p>
+                        <p class="text-sm text-gray-600">{{ resource.description }}</p>
+                        <p class="text-xs text-gray-500 mt-1">Available: {{ resource.availability }}</p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Detailed Answers -->
+            <div class="bg-white rounded-xl shadow-lg p-6">
+                <h2 class="text-xl font-semibold text-gray-900 mb-6">
+                    <i class="fas fa-list-alt text-purple-600 mr-2"></i>
+                    Your Responses
+                </h2>
+                
+                <div class="space-y-4">
+                    {% for answer in answers %}
+                    <div class="border border-gray-200 rounded-lg p-4">
+                        <div class="flex items-start justify-between">
+                            <div class="flex-1">
+                                <h4 class="font-medium text-gray-900 mb-2">Question {{ answer.question.order }}</h4>
+                                <p class="text-gray-700 text-sm mb-2">{{ answer.question.question_text }}</p>
+                                <p class="text-blue-700 font-medium">{{ answer.selected_choice.choice_text }}</p>
+                            </div>
+                            <div class="ml-4 text-right">
+                                <span class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-blue-100 text-blue-800 text-sm font-semibold">
+                                    {{ answer.selected_choice.score_value }}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="space-y-6">
+            <!-- Quick Actions -->
+            <div class="bg-white rounded-xl shadow-lg p-6">
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">
+                    <i class="fas fa-bolt text-yellow-500 mr-2"></i>
+                    Quick Actions
+                </h3>
+                <div class="space-y-3">
+                    <a href="{% url 'assessments:take' assessment.assessment_type.short_name %}" 
+                       class="block w-full bg-blue-600 hover:bg-blue-700 text-white text-center py-3 px-4 rounded-lg font-medium transition duration-300">
+                        <i class="fas fa-redo mr-2"></i>Retake Assessment
+                    </a>
+                    {% if user.is_authenticated %}
+                    <a href="{% url 'assessments:history' %}" 
+                       class="block w-full bg-purple-600 hover:bg-purple-700 text-white text-center py-3 px-4 rounded-lg font-medium transition duration-300">
+                        <i class="fas fa-history mr-2"></i>View History
+                    </a>
+                    <a href="{% url 'dashboard:home' %}" 
+                       class="block w-full bg-green-600 hover:bg-green-700 text-white text-center py-3 px-4 rounded-lg font-medium transition duration-300">
+                        <i class="fas fa-chart-line mr-2"></i>Dashboard
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Other Assessments -->
+            <div class="bg-white rounded-xl shadow-lg p-6">
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">
+                    <i class="fas fa-clipboard-list text-blue-600 mr-2"></i>
+                    Other Assessments
+                </h3>
+                <div class="space-y-3 text-sm">
+                    {% if assessment.assessment_type.short_name != 'PHQ9' %}
+                    <a href="{% url 'assessments:detail' 'PHQ9' %}" class="block p-3 bg-gray-50 hover:bg-gray-100 rounded-lg transition duration-300">
+                        <div class="font-medium text-gray-900">Depression (PHQ-9)</div>
+                        <div class="text-gray-600">Screen for depression symptoms</div>
+                    </a>
+                    {% endif %}
+                    {% if assessment.assessment_type.short_name != 'GAD7' %}
+                    <a href="{% url 'assessments:detail' 'GAD7' %}" class="block p-3 bg-gray-50 hover:bg-gray-100 rounded-lg transition duration-300">
+                        <div class="font-medium text-gray-900">Anxiety (GAD-7)</div>
+                        <div class="text-gray-600">Screen for anxiety symptoms</div>
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Resources -->
+            <div class="bg-white rounded-xl shadow-lg p-6">
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">
+                    <i class="fas fa-heart text-pink-600 mr-2"></i>
+                    Helpful Resources
+                </h3>
+                <div class="space-y-3">
+                    <a href="{% url 'resources:list' %}" class="block p-3 bg-pink-50 hover:bg-pink-100 rounded-lg transition duration-300">
+                        <div class="flex items-center">
+                            <i class="fas fa-book text-pink-600 mr-2"></i>
+                            <span class="text-pink-800 font-medium">Resource Library</span>
+                        </div>
+                        <p class="text-xs text-pink-600 mt-1">Self-help articles and tools</p>
+                    </a>
+                    <a href="{% url 'mood_tracker:home' %}" class="block p-3 bg-blue-50 hover:bg-blue-100 rounded-lg transition duration-300">
+                        <div class="flex items-center">
+                            <i class="fas fa-smile text-blue-600 mr-2"></i>
+                            <span class="text-blue-800 font-medium">Mood Tracker</span>
+                        </div>
+                        <p class="text-xs text-blue-600 mt-1">Track daily mood patterns</p>
+                    </a>
+                    <a href="{% url 'quotes:list' %}" class="block p-3 bg-yellow-50 hover:bg-yellow-100 rounded-lg transition duration-300">
+                        <div class="flex items-center">
+                            <i class="fas fa-quote-left text-yellow-600 mr-2"></i>
+                            <span class="text-yellow-800 font-medium">Daily Inspiration</span>
+                        </div>
+                        <p class="text-xs text-yellow-600 mt-1">Motivational quotes</p>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Share Results -->
+            {% if not assessment.is_anonymous %}
+            <div class="bg-white rounded-xl shadow-lg p-6">
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">
+                    <i class="fas fa-share-alt text-gray-600 mr-2"></i>
+                    Share Results
+                </h3>
+                <p class="text-sm text-gray-600 mb-3">Share this assessment with your healthcare provider</p>
+                <button onclick="window.print()" class="w-full bg-gray-600 hover:bg-gray-700 text-white py-2 px-4 rounded-lg font-medium transition duration-300">
+                    <i class="fas fa-print mr-2"></i>Print Results
+                </button>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Important Disclaimer -->
+    <div class="mt-12 bg-yellow-50 border-l-4 border-yellow-400 p-6 rounded-r-xl">
+        <div class="flex">
+            <div class="flex-shrink-0">
+                <i class="fas fa-exclamation-triangle text-yellow-400"></i>
+            </div>
+            <div class="ml-3">
+                <h3 class="text-lg font-medium text-yellow-800">Important Disclaimer</h3>
+                <p class="mt-1 text-sm text-yellow-700">
+                    This assessment is for informational purposes only and should not be used as a substitute for professional medical advice, diagnosis, or treatment. 
+                    If you're experiencing thoughts of self-harm or suicide, please contact a mental health professional immediately or call the crisis helpline at <strong>988</strong>.
+                    Always consult with a qualified healthcare provider about any questions you may have regarding your mental health.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

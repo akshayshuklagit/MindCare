@@ -1,0 +1,559 @@
+{% extends 'base.html' %}
+
+{% block title %}MindCare - Find Balance. Breathe. Be Present.{% endblock %}
+
+{% block content %}
+<!-- Hero Banner with Background -->
+<section class="hero-banner relative overflow-hidden">
+  <div class="absolute inset-0 bg-gradient-to-br from-blue-100 via-purple-50 to-pink-100"></div>
+  <div class="absolute inset-0 opacity-20">
+    <div class="w-full h-full bg-cover bg-center" style="background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 600"><defs><linearGradient id="sky" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" style="stop-color:%23ffeaa7;stop-opacity:1" /><stop offset="100%" style="stop-color:%23fab1a0;stop-opacity:1" /></linearGradient></defs><rect width="1000" height="600" fill="url(%23sky)"/><circle cx="200" cy="150" r="80" fill="%23fdcb6e" opacity="0.8"/><path d="M0,400 Q250,350 500,400 T1000,400 L1000,600 L0,600 Z" fill="%2300b894" opacity="0.6"/></svg>')"></div>
+  </div>
+  
+  <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 text-center">
+    <div class="fade-in">
+      <h1 class="text-6xl md:text-7xl font-bold text-gray-800 mb-6">
+         Find Balance. <br>
+        <span class="text-purple-600">Breathe. Be Present.</span>
+      </h1>
+      <p class="text-2xl text-gray-700 mb-8 max-w-3xl mx-auto leading-relaxed">
+        A mindful journey to emotional peace and self-awareness
+      </p>
+      <div class="flex flex-col sm:flex-row gap-4 justify-center mb-8">
+        <a href="{% url 'assessments:list' %}" class="bg-gradient-to-r from-green-500 to-blue-500 text-white px-8 py-4 rounded-full text-lg font-semibold hover:shadow-lg transition-all duration-300 card-hover">
+          🌿 Start Mind Test
+        </a>
+        <a href="{% url 'core:breathing' %}" class="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-8 py-4 rounded-full text-lg font-semibold hover:shadow-lg transition-all duration-300 card-hover">
+          🪷 Explore Tools
+        </a>
+      </div>
+      
+      <!-- Sound Toggle -->
+    
+    </div>
+  </div>
+</section>
+
+<!-- Quick Mood Check -->
+<section class="py-12 bg-white">
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+    <h2 class="text-2xl sm:text-3xl font-bold text-gray-800 mb-8">🌼 How are you feeling today?</h2>
+    <div class="flex flex-wrap justify-center gap-4 sm:gap-6 mb-8">
+      <button onclick="selectMood('happy')" class="mood-btn text-4xl sm:text-6xl hover:scale-110 transition-transform duration-300 p-2" data-mood="happy">😊</button>
+      <button onclick="selectMood('neutral')" class="mood-btn text-4xl sm:text-6xl hover:scale-110 transition-transform duration-300 p-2" data-mood="neutral">😐</button>
+      <button onclick="selectMood('worried')" class="mood-btn text-4xl sm:text-6xl hover:scale-110 transition-transform duration-300 p-2" data-mood="worried">😟</button>
+      <button onclick="selectMood('sad')" class="mood-btn text-4xl sm:text-6xl hover:scale-110 transition-transform duration-300 p-2" data-mood="sad">😢</button>
+      <button onclick="selectMood('angry')" class="mood-btn text-4xl sm:text-6xl hover:scale-110 transition-transform duration-300 p-2" data-mood="angry">😠</button>
+    </div>
+    <div id="moodResponse" class="hidden bg-gradient-to-r from-blue-50 to-purple-50 p-4 sm:p-6 rounded-2xl">
+      <p id="moodMessage" class="text-base sm:text-lg text-gray-700 mb-4"></p>
+      <div id="moodAction"></div>
+    </div>
+  </div>
+</section>
+
+<!-- Daily Quote Widget -->
+<section class="py-12 bg-gradient-to-r from-yellow-50 to-orange-50">
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+    <div class="bg-white rounded-2xl shadow-lg p-8">
+      <div class="text-4xl mb-4">✨</div>
+      <h2 class="text-2xl font-bold text-gray-800 mb-6">💭 Daily Wisdom</h2>
+      <blockquote id="dailyQuote" class="text-xl text-gray-700 italic mb-4 leading-relaxed">
+        "You have the right to work, but never to the fruits of your actions."
+      </blockquote>
+      <cite id="quoteSource" class="text-sm text-gray-600 block mb-6">— Bhagavad Gita 2.47</cite>
+      <div class="flex justify-center space-x-4">
+        <button onclick="newQuote()" class="bg-yellow-500 hover:bg-yellow-600 text-white px-6 py-3 rounded-full font-medium transition">
+          🔄 New Quote
+        </button>
+        <button onclick="saveQuote()" class="bg-purple-500 hover:bg-purple-600 text-white px-6 py-3 rounded-full font-medium transition">
+          💖 Save Favorite
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Feature Cards Grid -->
+<section class="py-16 bg-white">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <h2 class="text-3xl font-bold text-center text-gray-800 mb-12">🌿 Your Wellness Toolkit</h2>
+    
+    <!-- Main Features -->
+    <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+      <div class="feature-card bg-gradient-to-br from-blue-50 to-blue-100 p-6 rounded-2xl shadow-sm border border-blue-200">
+        <div class="text-4xl mb-4">🧠</div>
+        <h3 class="text-xl font-semibold text-gray-800 mb-3">Anxiety Care</h3>
+        <p class="text-gray-600 text-sm mb-4">Learn calming strategies and guided sessions</p>
+        <a href="{% url 'resources:category' 'anxiety-management' %}" class="text-blue-600 hover:text-blue-800 font-medium">Explore →</a>
+      </div>
+
+      <div class="feature-card bg-gradient-to-br from-indigo-50 to-indigo-100 p-6 rounded-2xl shadow-sm border border-indigo-200">
+        <div class="text-4xl mb-4">🌧️</div>
+        <h3 class="text-xl font-semibold text-gray-800 mb-3">Depression Awareness</h3>
+        <p class="text-gray-600 text-sm mb-4">Understand emotional signs and seek help early</p>
+        <a href="{% url 'resources:category' 'depression-support' %}" class="text-indigo-600 hover:text-indigo-800 font-medium">Learn →</a>
+      </div>
+
+      <div class="feature-card bg-gradient-to-br from-green-50 to-green-100 p-6 rounded-2xl shadow-sm border border-green-200">
+        <div class="text-4xl mb-4">🌞</div>
+        <h3 class="text-xl font-semibold text-gray-800 mb-3">Stress Relief</h3>
+        <p class="text-gray-600 text-sm mb-4">Handle daily tension with balance and focus</p>
+        <a href="{% url 'resources:category' 'stress-relief' %}" class="text-green-600 hover:text-green-800 font-medium">Practice →</a>
+      </div>
+
+      <div class="feature-card bg-gradient-to-br from-purple-50 to-purple-100 p-6 rounded-2xl shadow-sm border border-purple-200">
+        <div class="text-4xl mb-4">🪷</div>
+        <h3 class="text-xl font-semibold text-gray-800 mb-3">Mindfulness</h3>
+        <p class="text-gray-600 text-sm mb-4">Practice meditation and stay grounded</p>
+        <a href="{% url 'resources:category' 'mindfulness' %}" class="text-purple-600 hover:text-purple-800 font-medium">Meditate →</a>
+      </div>
+    </div>
+
+    <!-- Additional Tools -->
+    <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div class="feature-card bg-gradient-to-br from-pink-50 to-pink-100 p-6 rounded-2xl shadow-sm border border-pink-200">
+        <div class="text-4xl mb-4">🌸</div>
+        <h3 class="text-xl font-semibold text-gray-800 mb-3">Gratitude Jar</h3>
+        <p class="text-gray-600 text-sm mb-4">Write what you're thankful for today</p>
+        {% if user.is_authenticated %}
+        <a href="{% url 'core:gratitude_jar' %}" class="text-pink-600 hover:text-pink-800 font-medium">Write →</a>
+        {% else %}
+        <a href="{% url 'accounts:signup' %}" class="text-pink-600 hover:text-pink-800 font-medium">Join →</a>
+        {% endif %}
+      </div>
+
+      <div class="feature-card bg-gradient-to-br from-teal-50 to-teal-100 p-6 rounded-2xl shadow-sm border border-teal-200">
+        <div class="text-4xl mb-4">🎮</div>
+        <h3 class="text-xl font-semibold text-gray-800 mb-3">Mind-Calming Games</h3>
+        <p class="text-gray-600 text-sm mb-4">Play soothing games to relax your mind</p>
+        <a href="{% url 'core:emotion_wheel' %}" class="text-teal-600 hover:text-teal-800 font-medium">Play →</a>
+      </div>
+
+      <div class="feature-card bg-gradient-to-br from-orange-50 to-orange-100 p-6 rounded-2xl shadow-sm border border-orange-200">
+        <div class="text-4xl mb-4">📊</div>
+        <h3 class="text-xl font-semibold text-gray-800 mb-3">Mood Tracker</h3>
+        <p class="text-gray-600 text-sm mb-4">Track your mental journey visually</p>
+        {% if user.is_authenticated %}
+        <a href="{% url 'mood_tracker:home' %}" class="text-orange-600 hover:text-orange-800 font-medium">Track →</a>
+        {% else %}
+        <a href="{% url 'accounts:signup' %}" class="text-orange-600 hover:text-orange-800 font-medium">Join →</a>
+        {% endif %}
+      </div>
+
+      <div class="feature-card bg-gradient-to-br from-violet-50 to-violet-100 p-6 rounded-2xl shadow-sm border border-violet-200">
+        <div class="text-4xl mb-4">💬</div>
+        <h3 class="text-xl font-semibold text-gray-800 mb-3">Daily Reflection</h3>
+        <p class="text-gray-600 text-sm mb-4">Reflect on your day's thoughts</p>
+        <a href="{% url 'quotes:daily' %}" class="text-violet-600 hover:text-violet-800 font-medium">Reflect →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Your Daily Calm -->
+<section class="py-12 bg-gradient-to-r from-green-50 to-blue-50">
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+    <h2 class="text-3xl font-bold text-gray-800 mb-8">🌈 Your Daily Calm</h2>
+    <div class="bg-white rounded-2xl shadow-lg p-8">
+      <div id="dailyCalm" class="mb-6">
+        <div class="text-4xl mb-4">🌻</div>
+        <p class="text-xl text-gray-700 italic">"Take 10 deep breaths before you start your day."</p>
+      </div>
+      <div class="flex justify-center space-x-4">
+        <button onclick="newCalmTip()" class="bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-full font-medium transition">
+          🔄 New Tip
+        </button>
+        <button onclick="playCalmAudio()" class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-full font-medium transition">
+          🎵 Play Calm Audio
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Interactive Section -->
+<section class="py-16 bg-white">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <h2 class="text-3xl font-bold text-center text-gray-800 mb-12">🎮 Interactive Wellness</h2>
+    <div class="grid md:grid-cols-3 gap-8">
+      
+      <!-- Affirmation Generator -->
+      <div class="text-center bg-gradient-to-br from-yellow-50 to-yellow-100 p-8 rounded-2xl shadow-sm">
+        <div class="text-4xl mb-4">🪞</div>
+        <h3 class="text-xl font-semibold text-gray-800 mb-4">Affirmation Generator</h3>
+        <div id="affirmation" class="text-lg text-gray-700 italic mb-6 min-h-[3rem]">
+          "I am worthy of love and happiness."
+        </div>
+        <button onclick="generateAffirmation()" class="bg-yellow-500 hover:bg-yellow-600 text-white px-6 py-3 rounded-full font-medium transition">
+          ✨ New Affirmation
+        </button>
+      </div>
+
+      <!-- 3-Minute Timer -->
+      <div class="text-center bg-gradient-to-br from-blue-50 to-blue-100 p-8 rounded-2xl shadow-sm">
+        <div class="text-4xl mb-4">📅</div>
+        <h3 class="text-xl font-semibold text-gray-800 mb-4">3-Minute Relax Timer</h3>
+        <div id="timerDisplay" class="text-3xl font-bold text-blue-600 mb-6">3:00</div>
+        <div id="breathingCircle" class="w-20 h-20 bg-blue-500 rounded-full mx-auto mb-6 transition-all duration-4000"></div>
+        <button id="timerBtn" onclick="startTimer()" class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-full font-medium transition">
+          🫁 Start Breathing
+        </button>
+      </div>
+
+      <!-- Mindful Mini Game -->
+      <div class="text-center bg-gradient-to-br from-purple-50 to-purple-100 p-8 rounded-2xl shadow-sm">
+        <div class="text-4xl mb-4">🕯️</div>
+        <h3 class="text-xl font-semibold text-gray-800 mb-4">Light a Virtual Diya</h3>
+        <div id="diya" class="text-6xl mb-6 cursor-pointer transition-all duration-500" onclick="lightDiya()">🪔</div>
+        <p id="diyaMessage" class="text-gray-600 mb-4">Click to light the diya and set your intention</p>
+        <button onclick="resetDiya()" class="bg-purple-500 hover:bg-purple-600 text-white px-6 py-3 rounded-full font-medium transition">
+          🔄 Reset
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Learn. Reflect. Heal. Section -->
+<section class="py-16 bg-gray-50">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <h2 class="text-3xl font-bold text-center text-gray-800 mb-12">🌻 Learn. Reflect. Heal.</h2>
+    <div class="grid md:grid-cols-3 gap-8">
+      
+      <div class="bg-white rounded-2xl shadow-sm overflow-hidden hover:shadow-md transition-shadow">
+        <div class="h-48 bg-gradient-to-br from-green-200 to-green-300 flex items-center justify-center">
+          <div class="text-6xl">🧘</div>
+        </div>
+        <div class="p-6">
+          <h3 class="text-xl font-semibold text-gray-800 mb-3">Mindfulness & Meditation</h3>
+          <p class="text-gray-600 mb-4">Discover inner peace through guided meditation practices and mindful living.</p>
+          <a href="{% url 'resources:category' 'mindfulness' %}" class="text-green-600 hover:text-green-800 font-medium">Read More →</a>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-2xl shadow-sm overflow-hidden hover:shadow-md transition-shadow">
+        <div class="h-48 bg-gradient-to-br from-blue-200 to-blue-300 flex items-center justify-center">
+          <div class="text-6xl">💬</div>
+        </div>
+        <div class="p-6">
+          <h3 class="text-xl font-semibold text-gray-800 mb-3">Emotional Awareness</h3>
+          <p class="text-gray-600 mb-4">Learn to understand and navigate your emotions with compassion and wisdom.</p>
+          <a href="{% url 'resources:list' %}" class="text-blue-600 hover:text-blue-800 font-medium">Read More →</a>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-2xl shadow-sm overflow-hidden hover:shadow-md transition-shadow">
+        <div class="h-48 bg-gradient-to-br from-purple-200 to-purple-300 flex items-center justify-center">
+          <div class="text-6xl">🌿</div>
+        </div>
+        <div class="p-6">
+          <h3 class="text-xl font-semibold text-gray-800 mb-3">Spiritual Healing</h3>
+          <p class="text-gray-600 mb-4">Find healing through ancient wisdom and spiritual practices for modern life.</p>
+          <a href="{% url 'quotes:list' %}" class="text-purple-600 hover:text-purple-800 font-medium">Read More →</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Gratitude Wall -->
+<section class="py-12 bg-gradient-to-r from-pink-50 to-rose-50">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+    <h2 class="text-3xl font-bold text-gray-800 mb-8">💖 Gratitude Wall</h2>
+    <div id="gratitudeWall" class="grid md:grid-cols-3 gap-4 mb-8">
+      <div class="bg-white p-4 rounded-lg shadow-sm">
+        <p class="text-gray-700 italic">"I'm grateful for my morning tea."</p>
+      </div>
+      <div class="bg-white p-4 rounded-lg shadow-sm">
+        <p class="text-gray-700 italic">"Thankful for a peaceful moment after a stressful day."</p>
+      </div>
+      <div class="bg-white p-4 rounded-lg shadow-sm">
+        <p class="text-gray-700 italic">"Blessed to be learning self-care."</p>
+      </div>
+    </div>
+    <button onclick="openGratitudePopup()" class="bg-pink-500 hover:bg-pink-600 text-white px-8 py-3 rounded-full font-medium transition">
+      Add Your Gratitude 🌸
+    </button>
+  </div>
+</section>
+
+<!-- About + Mission -->
+<section class="py-16 bg-white">
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+    <h2 class="text-3xl font-bold text-gray-800 mb-8">🕊️ Our Mission</h2>
+    <p class="text-xl text-gray-700 leading-relaxed mb-8">
+      MindCare is created to guide individuals toward emotional balance through science, spirituality, and self-reflection. 
+      We believe that true wellness comes from understanding both the mind and the soul, combining modern psychology with 
+      timeless wisdom from the Bhagavad Gita.
+    </p>
+    <div class="flex justify-center space-x-4">
+      <a href="#" class="bg-purple-500 hover:bg-purple-600 text-white px-6 py-3 rounded-full font-medium transition">
+        Our Vision
+      </a>
+      <a href="#" class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-3 rounded-full font-medium transition">
+        Meet the Creator
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- Gratitude Popup -->
+<div id="gratitudePopup" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+  <div class="bg-white rounded-2xl p-8 max-w-md mx-4 shadow-2xl">
+    <h3 class="text-2xl font-bold text-gray-800 mb-4 text-center">🌸 Share Your Gratitude</h3>
+    <textarea id="gratitudeText" placeholder="What are you grateful for today?" class="w-full p-4 border border-gray-300 rounded-lg mb-4 h-24 resize-none"></textarea>
+    <div class="flex justify-center space-x-3">
+      <button onclick="submitGratitude()" class="bg-pink-500 hover:bg-pink-600 text-white px-6 py-2 rounded-lg font-medium transition">
+        Submit
+      </button>
+      <button onclick="closeGratitudePopup()" class="bg-gray-300 hover:bg-gray-400 text-gray-700 px-6 py-2 rounded-lg font-medium transition">
+        Cancel
+      </button>
+    </div>
+  </div>
+</div>
+
+<style>
+.hero-banner {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+}
+
+.feature-card {
+  transition: all 0.3s ease;
+}
+
+.feature-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+}
+
+.card-hover {
+  transition: all 0.3s ease;
+}
+
+.card-hover:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.2);
+}
+
+.fade-in {
+  animation: fadeIn 1.5s ease-in;
+}
+
+.mood-btn.selected {
+  transform: scale(1.2);
+  filter: drop-shadow(0 0 10px rgba(147, 51, 234, 0.5));
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes breathe {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.3); }
+}
+
+.breathing { animation: breathe 4s infinite; }
+</style>
+
+<script>
+// Quotes array
+const quotes = [
+  { text: "You have the right to work, but never to the fruits of your actions.", source: "Bhagavad Gita 2.47" },
+  { text: "A person who is calm and self-controlled remains steady in joy and sorrow.", source: "Bhagavad Gita 2.57" },
+  { text: "The mind is everything. What you think you become.", source: "Buddha" },
+  { text: "Peace comes from within. Do not seek it without.", source: "Buddha" },
+  { text: "You are not your thoughts. You are the observer of your thoughts.", source: "Ancient Wisdom" }
+];
+
+// Calm tips array
+const calmTips = [
+  { icon: "🌻", text: "Take 10 deep breaths before you start your day." },
+  { icon: "🪷", text: "Try not to react — just observe." },
+  { icon: "💫", text: "Forgive, release, and breathe." },
+  { icon: "🌸", text: "Find three things you're grateful for right now." },
+  { icon: "🕯️", text: "Light a candle and watch the flame dance." }
+];
+
+// Affirmations array
+const affirmations = [
+  "I am worthy of love and happiness.",
+  "I choose peace over worry.",
+  "I am exactly where I need to be.",
+  "I trust in my ability to overcome challenges.",
+  "I am grateful for this moment.",
+  "I radiate positive energy.",
+  "I am strong, capable, and resilient."
+];
+
+// Sound toggle
+let soundPlaying = false;
+document.getElementById('soundToggle').addEventListener('click', function() {
+  soundPlaying = !soundPlaying;
+  document.getElementById('soundStatus').textContent = soundPlaying ? 'ON' : 'OFF';
+});
+
+// Mood selection
+function selectMood(mood) {
+  document.querySelectorAll('.mood-btn').forEach(btn => btn.classList.remove('selected'));
+  document.querySelector(`[data-mood="${mood}"]`).classList.add('selected');
+  
+  const responses = {
+    happy: { message: "Keep shining — practice gratitude today! ✨", action: '<a href="/gratitude/" class="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded-lg">Practice Gratitude</a>' },
+    neutral: { message: "A balanced mind is a peaceful mind. 🧘‍♀️", action: '<a href="/breathing/" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg">Try Meditation</a>' },
+    worried: { message: "Try a 3-minute calming meditation. 🌸", action: '<a href="/breathing/" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg">Start Breathing</a>' },
+    sad: { message: "It's okay to feel sad. You're not alone. 💙", action: '<a href="/resources/crisis/" class="bg-purple-500 hover:bg-purple-600 text-white px-4 py-2 rounded-lg">Find Support</a>' },
+    angry: { message: "Take a moment to breathe and center yourself. 🌿", action: '<a href="/breathing/" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg">Calm Down</a>' }
+  };
+  
+  const response = responses[mood];
+  document.getElementById('moodMessage').textContent = response.message;
+  document.getElementById('moodAction').innerHTML = response.action;
+  document.getElementById('moodResponse').classList.remove('hidden');
+}
+
+// Quote functions
+function newQuote() {
+  const quote = quotes[Math.floor(Math.random() * quotes.length)];
+  document.getElementById('dailyQuote').textContent = `"${quote.text}"`;
+  document.getElementById('quoteSource').textContent = `— ${quote.source}`;
+}
+
+function saveQuote() {
+  alert('Quote saved to your favorites! 💖');
+}
+
+// Calm tip function
+function newCalmTip() {
+  const tip = calmTips[Math.floor(Math.random() * calmTips.length)];
+  document.getElementById('dailyCalm').innerHTML = `
+    <div class="text-4xl mb-4">${tip.icon}</div>
+    <p class="text-xl text-gray-700 italic">"${tip.text}"</p>
+  `;
+}
+
+function playCalmAudio() {
+  alert('🎵 Calm audio would play here (feature coming soon!)');
+}
+
+// Affirmation generator
+function generateAffirmation() {
+  const affirmation = affirmations[Math.floor(Math.random() * affirmations.length)];
+  document.getElementById('affirmation').textContent = `"${affirmation}"`;
+}
+
+// Timer functionality
+let timerInterval;
+let timeLeft = 180; // 3 minutes
+
+function startTimer() {
+  const btn = document.getElementById('timerBtn');
+  const circle = document.getElementById('breathingCircle');
+  
+  if (btn.textContent.includes('Start')) {
+    btn.textContent = '⏸️ Pause';
+    btn.onclick = pauseTimer;
+    circle.classList.add('breathing');
+    
+    timerInterval = setInterval(() => {
+      timeLeft--;
+      updateTimerDisplay();
+      
+      if (timeLeft <= 0) {
+        completeTimer();
+      }
+    }, 1000);
+  }
+}
+
+function pauseTimer() {
+  const btn = document.getElementById('timerBtn');
+  const circle = document.getElementById('breathingCircle');
+  
+  clearInterval(timerInterval);
+  btn.textContent = '▶️ Resume';
+  btn.onclick = startTimer;
+  circle.classList.remove('breathing');
+}
+
+function completeTimer() {
+  clearInterval(timerInterval);
+  document.getElementById('timerBtn').textContent = '🎉 Complete!';
+  document.getElementById('breathingCircle').classList.remove('breathing');
+  setTimeout(() => {
+    document.getElementById('timerBtn').textContent = '🫁 Start Breathing';
+    document.getElementById('timerBtn').onclick = startTimer;
+    timeLeft = 180;
+    updateTimerDisplay();
+  }, 3000);
+}
+
+function updateTimerDisplay() {
+  const minutes = Math.floor(timeLeft / 60);
+  const seconds = timeLeft % 60;
+  document.getElementById('timerDisplay').textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+}
+
+// Diya game
+let diyaLit = false;
+function lightDiya() {
+  const diya = document.getElementById('diya');
+  const message = document.getElementById('diyaMessage');
+  
+  if (!diyaLit) {
+    diya.textContent = '🪔✨';
+    message.textContent = 'Your intention is set. May peace be with you. 🙏';
+    diyaLit = true;
+  }
+}
+
+function resetDiya() {
+  document.getElementById('diya').textContent = '🪔';
+  document.getElementById('diyaMessage').textContent = 'Click to light the diya and set your intention';
+  diyaLit = false;
+}
+
+// Gratitude popup
+function openGratitudePopup() {
+  document.getElementById('gratitudePopup').classList.remove('hidden');
+}
+
+function closeGratitudePopup() {
+  document.getElementById('gratitudePopup').classList.add('hidden');
+  document.getElementById('gratitudeText').value = '';
+}
+
+function submitGratitude() {
+  const text = document.getElementById('gratitudeText').value.trim();
+  if (text) {
+    // Add to gratitude wall
+    const wall = document.getElementById('gratitudeWall');
+    const newGratitude = document.createElement('div');
+    newGratitude.className = 'bg-white p-4 rounded-lg shadow-sm';
+    newGratitude.innerHTML = `<p class="text-gray-700 italic">"${text}"</p>`;
+    wall.appendChild(newGratitude);
+    
+    closeGratitudePopup();
+    alert('Thank you for sharing your gratitude! 🌸');
+  }
+}
+
+// Close popup when clicking outside
+document.getElementById('gratitudePopup').addEventListener('click', function(e) {
+  if (e.target === this) {
+    closeGratitudePopup();
+  }
+});
+</script>
+{% endblock %}

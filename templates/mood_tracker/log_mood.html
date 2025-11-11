@@ -1,0 +1,114 @@
+{% extends 'base.html' %}
+
+{% block title %}Log Your Mood{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8 max-w-2xl">
+    <h1 class="text-3xl font-bold mb-6">Log Your Mood</h1>
+    
+    <form method="post" class="bg-white rounded-lg shadow-md p-6">
+        {% csrf_token %}
+        
+        <!-- Mood Rating -->
+        <div class="mb-6">
+            <label class="block text-sm font-medium text-gray-700 mb-2">How are you feeling today?</label>
+            <div class="grid grid-cols-5 gap-2">
+                {% for value, label in mood_choices %}
+                    <label class="text-center cursor-pointer">
+                        <input type="radio" name="mood_rating" value="{{ value }}" 
+                               {% if existing_entry.mood_rating == value %}checked{% endif %}
+                               class="sr-only peer" required>
+                        <div class="p-4 border-2 rounded-lg peer-checked:border-blue-500 peer-checked:bg-blue-50">
+                            <div class="text-2xl mb-1">
+                                {% if value == 1 %}😢
+                                {% elif value == 2 %}😕
+                                {% elif value == 3 %}😐
+                                {% elif value == 4 %}😊
+                                {% else %}😄
+                                {% endif %}
+                            </div>
+                            <div class="text-xs">{{ label }}</div>
+                        </div>
+                    </label>
+                {% endfor %}
+            </div>
+        </div>
+        
+        <!-- Energy Level -->
+        <div class="mb-6">
+            <label class="block text-sm font-medium text-gray-700 mb-2">Energy Level</label>
+            <div class="grid grid-cols-5 gap-2">
+                {% for value, label in energy_choices %}
+                    <label class="text-center cursor-pointer">
+                        <input type="radio" name="energy_level" value="{{ value }}" 
+                               {% if existing_entry.energy_level == value %}checked{% endif %}
+                               class="sr-only peer" required>
+                        <div class="p-4 border-2 rounded-lg peer-checked:border-green-500 peer-checked:bg-green-50">
+                            <div class="text-2xl mb-1">⚡</div>
+                            <div class="text-xs">{{ label }}</div>
+                        </div>
+                    </label>
+                {% endfor %}
+            </div>
+        </div>
+        
+        <!-- Anxiety Level -->
+        <div class="mb-6">
+            <label for="anxiety_level" class="block text-sm font-medium text-gray-700 mb-2">
+                Anxiety Level (1-10)
+            </label>
+            <input type="range" id="anxiety_level" name="anxiety_level" min="1" max="10" 
+                   value="{{ existing_entry.anxiety_level|default:5 }}"
+                   class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer">
+            <div class="flex justify-between text-xs text-gray-500 mt-1">
+                <span>1 (No anxiety)</span>
+                <span>10 (Severe anxiety)</span>
+            </div>
+        </div>
+        
+        <!-- Sleep Hours -->
+        <div class="mb-6">
+            <label for="sleep_hours" class="block text-sm font-medium text-gray-700 mb-2">
+                Hours of Sleep (optional)
+            </label>
+            <input type="number" id="sleep_hours" name="sleep_hours" step="0.5" min="0" max="24"
+                   value="{{ existing_entry.sleep_hours|default:'' }}"
+                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+        </div>
+        
+        <!-- Notes -->
+        <div class="mb-6">
+            <label for="notes" class="block text-sm font-medium text-gray-700 mb-2">
+                Notes (optional)
+            </label>
+            <textarea id="notes" name="notes" rows="3" 
+                      class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      placeholder="How was your day? Any specific thoughts or events?">{{ existing_entry.notes|default:'' }}</textarea>
+        </div>
+        
+        <div class="flex gap-4">
+            <button type="submit" class="bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600">
+                {% if existing_entry %}Update Mood{% else %}Log Mood{% endif %}
+            </button>
+            <a href="{% url 'mood_tracker:home' %}" class="bg-gray-500 text-white px-6 py-3 rounded-lg hover:bg-gray-600">
+                Cancel
+            </a>
+        </div>
+    </form>
+</div>
+
+<script>
+// Update anxiety level display
+const anxietySlider = document.getElementById('anxiety_level');
+const anxietyValue = document.createElement('span');
+anxietyValue.className = 'text-sm font-medium text-gray-700';
+anxietySlider.parentNode.insertBefore(anxietyValue, anxietySlider.nextSibling);
+
+function updateAnxietyDisplay() {
+    anxietyValue.textContent = ` Current: ${anxietySlider.value}`;
+}
+
+anxietySlider.addEventListener('input', updateAnxietyDisplay);
+updateAnxietyDisplay();
+</script>
+{% endblock %}

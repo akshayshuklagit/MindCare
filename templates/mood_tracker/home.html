@@ -1,0 +1,102 @@
+{% extends 'base.html' %}
+
+{% block title %}Mood Tracker - MindCare{% endblock %}
+
+{% block content %}
+<div class="gradient-bg py-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <h1 class="text-4xl font-bold text-gray-800 mb-2">Mood Tracker</h1>
+        <p class="text-gray-600 mb-8">Track your daily emotions and mental well-being</p>
+    </div>
+</div>
+
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    
+    <!-- Today's Mood -->
+    <div class="bg-white rounded-xl shadow-sm p-6 mb-6 card-hover">
+        <h2 class="text-xl font-semibold mb-4 flex items-center">
+            <i class="fas fa-calendar-day text-purple-500 mr-2"></i>Today's Mood
+        </h2>
+        {% if today_entry %}
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="text-center">
+                    <div class="bg-blue-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-3">
+                        <i class="fas fa-smile text-blue-600 text-2xl"></i>
+                    </div>
+                    <p class="text-gray-600">Mood</p>
+                    <p class="font-semibold text-blue-600">{{ today_entry.get_mood_rating_display }}</p>
+                </div>
+                <div class="text-center">
+                    <div class="bg-green-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-3">
+                        <i class="fas fa-bolt text-green-600 text-2xl"></i>
+                    </div>
+                    <p class="text-gray-600">Energy</p>
+                    <p class="font-semibold text-green-600">{{ today_entry.get_energy_level_display }}</p>
+                </div>
+                <div class="text-center">
+                    <div class="bg-red-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-3">
+                        <i class="fas fa-exclamation-triangle text-red-600 text-2xl"></i>
+                    </div>
+                    <p class="text-gray-600">Anxiety</p>
+                    <p class="font-semibold text-red-600">{{ today_entry.anxiety_level }}/10</p>
+                </div>
+            </div>
+            <div class="mt-6">
+                <a href="{% url 'mood_tracker:log' %}" class="bg-purple-500 text-white px-6 py-3 rounded-lg hover:bg-purple-600 transition card-hover inline-flex items-center">
+                    <i class="fas fa-edit mr-2"></i>Update Today's Mood
+                </a>
+            </div>
+        {% else %}
+            <p class="text-gray-600 mb-4">You haven't logged your mood today yet.</p>
+            <a href="{% url 'mood_tracker:log' %}" class="bg-purple-500 text-white px-8 py-4 rounded-lg hover:bg-purple-600 transition card-hover inline-flex items-center text-lg font-semibold">
+                <i class="fas fa-plus mr-2"></i>Log Your Mood
+            </a>
+        {% endif %}
+    </div>
+    
+    <!-- Quick Stats -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div class="bg-white rounded-xl shadow-sm p-6 text-center card-hover">
+            <div class="bg-blue-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                <i class="fas fa-smile text-blue-600 text-2xl"></i>
+            </div>
+            <h3 class="text-lg font-semibold text-gray-800 mb-2">Average Mood</h3>
+            <div class="text-3xl font-bold text-blue-500">
+                {{ avg_mood.avg_mood|floatformat:1|default:"--" }}
+            </div>
+        </div>
+        <div class="bg-white rounded-xl shadow-sm p-6 text-center card-hover">
+            <div class="bg-green-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                <i class="fas fa-bolt text-green-600 text-2xl"></i>
+            </div>
+            <h3 class="text-lg font-semibold text-gray-800 mb-2">Average Energy</h3>
+            <div class="text-3xl font-bold text-green-500">
+                {{ avg_mood.avg_energy|floatformat:1|default:"--" }}
+            </div>
+        </div>
+        <div class="bg-white rounded-xl shadow-sm p-6 text-center card-hover">
+            <div class="bg-red-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                <i class="fas fa-exclamation-triangle text-red-600 text-2xl"></i>
+            </div>
+            <h3 class="text-lg font-semibold text-gray-800 mb-2">Average Anxiety</h3>
+            <div class="text-3xl font-bold text-red-500">
+                {{ avg_mood.avg_anxiety|floatformat:1|default:"--" }}
+            </div>
+        </div>
+    </div>
+    
+    <!-- Navigation -->
+    <div class="flex flex-wrap gap-4 justify-center">
+        <a href="{% url 'mood_tracker:log' %}" class="bg-purple-500 text-white px-6 py-3 rounded-lg hover:bg-purple-600 transition card-hover inline-flex items-center">
+            <i class="fas fa-plus mr-2"></i>Log Mood
+        </a>
+        <a href="{% url 'mood_tracker:history' %}" class="bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 transition card-hover inline-flex items-center">
+            <i class="fas fa-history mr-2"></i>View History
+        </a>
+        <a href="{% url 'mood_tracker:analytics' %}" class="bg-green-500 text-white px-6 py-3 rounded-lg hover:bg-green-600 transition card-hover inline-flex items-center">
+            <i class="fas fa-chart-bar mr-2"></i>Analytics
+        </a>
+    </div>
+</div>
+</div>
+{% endblock %}

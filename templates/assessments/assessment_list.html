@@ -1,0 +1,129 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ page_title }} - MindCare{% endblock %}
+
+{% block content %}
+<div class="gradient-bg py-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <h1 class="text-4xl font-bold text-gray-800 mb-2">Mental Health Assessments</h1>
+        <p class="text-gray-600 mb-8">Evidence-based tools to understand your mental well-being</p>
+    </div>
+</div>
+
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+    <!-- Assessment Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        {% for assessment in assessments %}
+        <div class="bg-white rounded-xl shadow-sm card-hover overflow-hidden">
+            <div class="p-6">
+                <!-- Assessment Header -->
+                <div class="flex items-center mb-4">
+                    <div class="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mr-4">
+                        <i class="fas fa-brain text-purple-600 text-2xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-semibold text-gray-800">{{ assessment.name }}</h3>
+                        <p class="text-sm text-purple-600 font-medium">{{ assessment.short_name }}</p>
+                    </div>
+                </div>
+
+                <!-- Assessment Info -->
+                <p class="text-gray-600 mb-4 leading-relaxed">{{ assessment.description|truncatewords:20 }}</p>
+                
+                <!-- Stats -->
+                <div class="flex items-center space-x-4 text-sm text-gray-500 mb-6">
+                    <span class="flex items-center">
+                        <i class="fas fa-clock mr-1"></i>
+                        ~{{ assessment.estimated_time }} minutes
+                    </span>
+                    <span class="flex items-center">
+                        <i class="fas fa-question-circle mr-1"></i>
+                        {{ assessment.questions.count }} questions
+                    </span>
+                    {% if not assessment.requires_login %}
+                    <span class="flex items-center text-green-600">
+                        <i class="fas fa-user-secret mr-1"></i>
+                        Anonymous
+                    </span>
+                    {% endif %}
+                </div>
+
+                <!-- Actions -->
+                <div class="flex space-x-3">
+                    <a href="{% url 'assessments:detail' assessment.short_name %}" 
+                       class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 text-center py-3 px-4 rounded-lg font-medium transition card-hover inline-flex items-center justify-center">
+                        <i class="fas fa-info-circle mr-2"></i>Learn More
+                    </a>
+                    <a href="{% url 'assessments:take' assessment.short_name %}" 
+                       class="flex-1 bg-purple-500 hover:bg-purple-600 text-white text-center py-3 px-4 rounded-lg font-medium transition card-hover inline-flex items-center justify-center">
+                        <i class="fas fa-play mr-2"></i>Take Assessment
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-span-2">
+            <div class="text-center py-12">
+                <div class="text-6xl mb-4 text-gray-300">
+                    <i class="fas fa-clipboard-list"></i>
+                </div>
+                <h3 class="text-xl font-semibold text-gray-600 mb-2">No Assessments Available</h3>
+                <p class="text-gray-500">Please check back later or contact an administrator.</p>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Information Section -->
+    <div class="mt-16 bg-gradient-to-r from-purple-50 to-blue-50 rounded-xl p-8">
+        <h2 class="text-2xl font-bold text-gray-800 mb-6 text-center">About Our Assessments</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div class="text-center">
+                <div class="bg-blue-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-certificate text-blue-600 text-2xl"></i>
+                </div>
+                <h3 class="font-semibold text-gray-800 mb-2">Evidence-Based</h3>
+                <p class="text-gray-600 text-sm">Clinically validated questionnaires used by mental health professionals.</p>
+            </div>
+            <div class="text-center">
+                <div class="bg-green-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-shield-alt text-green-600 text-2xl"></i>
+                </div>
+                <h3 class="font-semibold text-gray-800 mb-2">Private & Secure</h3>
+                <p class="text-gray-600 text-sm">Your responses are confidential and secure. Anonymous options available.</p>
+            </div>
+            <div class="text-center">
+                <div class="bg-purple-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-bolt text-purple-600 text-2xl"></i>
+                </div>
+                <h3 class="font-semibold text-gray-800 mb-2">Immediate Results</h3>
+                <p class="text-gray-600 text-sm">Get instant results with personalized guidance and recommendations.</p>
+            </div>
+            <div class="text-center">
+                <div class="bg-orange-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-hands-helping text-orange-600 text-2xl"></i>
+                </div>
+                <h3 class="font-semibold text-gray-800 mb-2">Professional Support</h3>
+                <p class="text-gray-600 text-sm">Resources and guidance on when professional help is beneficial.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Disclaimer -->
+    <div class="mt-8 bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded-r-lg">
+        <div class="flex">
+            <div class="flex-shrink-0">
+                <i class="fas fa-exclamation-triangle text-yellow-400"></i>
+            </div>
+            <div class="ml-3">
+                <p class="text-sm text-yellow-700">
+                    <strong>Important:</strong> These assessments are for informational purposes only and do not replace professional medical advice, diagnosis, or treatment. 
+                    If you're experiencing a mental health crisis, please contact a mental health professional or call 988 (Suicide & Crisis Lifeline) immediately.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+{% endblock %}

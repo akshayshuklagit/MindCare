@@ -1,0 +1,269 @@
+{% extends 'base.html' %} {% block title %}Breathing Exercise -
+MindCare{%endblock %} {% block content %}
+<div class="gradient-bg py-8">
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+    <h1 class="text-4xl font-bold text-gray-800 mb-2">Breathing Exercise</h1>
+    <p class="text-gray-600 mb-8">
+      Take a moment to relax and breathe mindfully
+    </p>
+  </div>
+</div>
+
+<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+  <div class="bg-white rounded-xl shadow-sm p-8 card-hover text-center">
+    <!-- Breathing Circle -->
+    <div class="relative mb-8">
+      <div
+        id="breathingCircle"
+        class="w-40 h-40 mx-auto rounded-full bg-gradient-to-r from-blue-400 to-purple-500 flex items-center justify-center transition-all duration-4000 ease-in-out"
+      >
+        <div class="text-white text-xl font-semibold" id="breathingText">
+          Start
+        </div>
+      </div>
+    </div>
+
+    <!-- Instructions -->
+    <div class="mb-8 mt-12">
+      <h2 class="text-2xl font-semibold text-gray-800 mb-4">
+        4-7-8 Breathing Technique
+      </h2>
+      <div class="grid md:grid-cols-3 gap-6 text-left">
+        <div class="bg-blue-50 p-4 rounded-lg">
+          <div class="flex items-center mb-2">
+            <div
+              class="bg-blue-500 text-white w-8 h-8 rounded-full flex items-center justify-center mr-3"
+            >
+              <span class="font-bold">4</span>
+            </div>
+            <h3 class="font-semibold text-gray-800">Inhale</h3>
+          </div>
+          <p class="text-gray-600 text-sm">
+            Breathe in slowly through your nose for 4 seconds
+          </p>
+        </div>
+        <div class="bg-yellow-50 p-4 rounded-lg">
+          <div class="flex items-center mb-2">
+            <div
+              class="bg-yellow-500 text-white w-8 h-8 rounded-full flex items-center justify-center mr-3"
+            >
+              <span class="font-bold">7</span>
+            </div>
+            <h3 class="font-semibold text-gray-800">Hold</h3>
+          </div>
+          <p class="text-gray-600 text-sm">Hold your breath for 7 seconds</p>
+        </div>
+        <div class="bg-green-50 p-4 rounded-lg">
+          <div class="flex items-center mb-2">
+            <div
+              class="bg-green-500 text-white w-8 h-8 rounded-full flex items-center justify-center mr-3"
+            >
+              <span class="font-bold">8</span>
+            </div>
+            <h3 class="font-semibold text-gray-800">Exhale</h3>
+          </div>
+          <p class="text-gray-600 text-sm">
+            Exhale slowly through your mouth for 8 seconds
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Controls -->
+    <div class="flex justify-center gap-4 mb-8">
+      <button
+        id="startBtn"
+        class="bg-purple-500 text-white px-8 py-3 rounded-lg hover:bg-purple-600 transition card-hover inline-flex items-center"
+      >
+        <i class="fas fa-play mr-2"></i>Start Exercise
+      </button>
+      <button
+        id="pauseBtn"
+        class="bg-gray-500 text-white px-8 py-3 rounded-lg hover:bg-gray-600 transition card-hover inline-flex items-center"
+        style="display: none"
+      >
+        <i class="fas fa-pause mr-2"></i>Pause
+      </button>
+      <button
+        id="resetBtn"
+        class="bg-red-500 text-white px-8 py-3 rounded-lg hover:bg-red-600 transition card-hover inline-flex items-center"
+      >
+        <i class="fas fa-stop mr-2"></i>Reset
+      </button>
+    </div>
+
+    <!-- Progress -->
+    <div class="bg-gray-50 rounded-lg p-4">
+      <div class="flex justify-between items-center mb-2">
+        <span class="text-gray-600">Cycles Completed:</span>
+        <span id="cycleCount" class="font-bold text-purple-600">0</span>
+      </div>
+      <div class="flex justify-between items-center">
+        <span class="text-gray-600">Current Phase:</span>
+        <span id="currentPhase" class="font-bold text-blue-600">Ready</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Benefits Section -->
+  <div class="mt-8 bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl p-8">
+    <h2 class="text-2xl font-bold text-gray-800 mb-6 text-center">
+      Benefits of Breathing Exercises
+    </h2>
+    <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div class="text-center">
+        <div
+          class="bg-blue-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4"
+        >
+          <i class="fas fa-heart text-blue-600 text-2xl"></i>
+        </div>
+        <h3 class="font-semibold text-gray-800 mb-2">Reduces Stress</h3>
+        <p class="text-gray-600 text-sm">
+          Activates the body's relaxation response
+        </p>
+      </div>
+      <div class="text-center">
+        <div
+          class="bg-green-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4"
+        >
+          <i class="fas fa-brain text-green-600 text-2xl"></i>
+        </div>
+        <h3 class="font-semibold text-gray-800 mb-2">Improves Focus</h3>
+        <p class="text-gray-600 text-sm">
+          Enhances concentration and mental clarity
+        </p>
+      </div>
+      <div class="text-center">
+        <div
+          class="bg-purple-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4"
+        >
+          <i class="fas fa-moon text-purple-600 text-2xl"></i>
+        </div>
+        <h3 class="font-semibold text-gray-800 mb-2">Better Sleep</h3>
+        <p class="text-gray-600 text-sm">
+          Promotes relaxation and better sleep quality
+        </p>
+      </div>
+      <div class="text-center">
+        <div
+          class="bg-orange-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4"
+        >
+          <i class="fas fa-smile text-orange-600 text-2xl"></i>
+        </div>
+        <h3 class="font-semibold text-gray-800 mb-2">Mood Balance</h3>
+        <p class="text-gray-600 text-sm">Helps regulate emotions and anxiety</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  class BreathingExercise {
+    constructor() {
+      this.circle = document.getElementById("breathingCircle");
+      this.text = document.getElementById("breathingText");
+      this.startBtn = document.getElementById("startBtn");
+      this.pauseBtn = document.getElementById("pauseBtn");
+      this.resetBtn = document.getElementById("resetBtn");
+      this.cycleCount = document.getElementById("cycleCount");
+      this.currentPhase = document.getElementById("currentPhase");
+
+      this.isRunning = false;
+      this.isPaused = false;
+      this.cycles = 0;
+      this.currentTimeout = null;
+
+      this.bindEvents();
+    }
+
+    bindEvents() {
+      this.startBtn.addEventListener("click", () => this.start());
+      this.pauseBtn.addEventListener("click", () => this.pause());
+      this.resetBtn.addEventListener("click", () => this.reset());
+    }
+
+    start() {
+      if (this.isPaused) {
+        this.isPaused = false;
+        this.startBtn.style.display = "none";
+        this.pauseBtn.style.display = "inline-flex";
+        return;
+      }
+
+      this.isRunning = true;
+      this.startBtn.style.display = "none";
+      this.pauseBtn.style.display = "inline-flex";
+      this.runCycle();
+    }
+
+    pause() {
+      this.isPaused = true;
+      this.isRunning = false;
+      if (this.currentTimeout) {
+        clearTimeout(this.currentTimeout);
+      }
+      this.startBtn.style.display = "inline-flex";
+      this.pauseBtn.style.display = "none";
+      this.text.textContent = "Paused";
+      this.currentPhase.textContent = "Paused";
+    }
+
+    reset() {
+      this.isRunning = false;
+      this.isPaused = false;
+      this.cycles = 0;
+      if (this.currentTimeout) {
+        clearTimeout(this.currentTimeout);
+      }
+
+      this.startBtn.style.display = "inline-flex";
+      this.pauseBtn.style.display = "none";
+      this.circle.style.transform = "scale(1)";
+      this.text.textContent = "Click Start";
+      this.cycleCount.textContent = "0";
+      this.currentPhase.textContent = "Ready";
+    }
+
+    runCycle() {
+      if (!this.isRunning || this.isPaused) return;
+
+      // Inhale phase (4 seconds)
+      this.currentPhase.textContent = "Inhale";
+      this.circle.style.transform = "scale(1.5)";
+      this.circle.style.transitionDuration = "4s";
+      this.text.textContent = "Breathe In";
+
+      this.currentTimeout = setTimeout(() => {
+        if (!this.isRunning || this.isPaused) return;
+
+        // Hold phase (7 seconds)
+        this.currentPhase.textContent = "Hold";
+        this.text.textContent = "Hold";
+
+        this.currentTimeout = setTimeout(() => {
+          if (!this.isRunning || this.isPaused) return;
+
+          // Exhale phase (8 seconds)
+          this.currentPhase.textContent = "Exhale";
+          this.circle.style.transform = "scale(1)";
+          this.circle.style.transitionDuration = "8s";
+          this.text.textContent = "Breathe Out";
+
+          this.currentTimeout = setTimeout(() => {
+            if (!this.isRunning || this.isPaused) return;
+
+            this.cycles++;
+            this.cycleCount.textContent = this.cycles;
+            this.runCycle();
+          }, 8000);
+        }, 7000);
+      }, 4000);
+    }
+  }
+
+  // Initialize breathing exercise when page loads
+  document.addEventListener("DOMContentLoaded", () => {
+    new BreathingExercise();
+  });
+</script>
+{% endblock %}

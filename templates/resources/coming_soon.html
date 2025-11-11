@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block title %}Resources{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8 text-center">
+    <div class="max-w-2xl mx-auto">
+        <div class="text-6xl mb-6">📚</div>
+        <h1 class="text-3xl font-bold mb-4">Resources Coming Soon</h1>
+        <p class="text-gray-600 mb-8">We're working on building a comprehensive resource library to help you on your mental health journey.</p>
+        <a href="{% url 'dashboard:home' %}" class="bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600">
+            Back to Dashboard
+        </a>
+    </div>
+</div>
+{% endblock %}

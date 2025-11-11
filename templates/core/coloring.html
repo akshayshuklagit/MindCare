@@ -1,0 +1,392 @@
+{% extends 'base.html' %}
+
+{% block title %}Mindful Coloring - MindCare{% endblock %}
+
+{% block content %}
+<div class="gradient-bg py-8">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <h1 class="text-4xl font-bold text-gray-800 mb-2">🎨 Mindful Coloring</h1>
+        <p class="text-gray-600 mb-8">Relax and unwind with calming coloring patterns</p>
+    </div>
+</div>
+
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="grid lg:grid-cols-4 gap-8">
+        <!-- Coloring Canvas -->
+        <div class="lg:col-span-3">
+            <div class="bg-white rounded-xl shadow-sm p-6">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-xl font-semibold text-gray-800" id="patternTitle">Mandala Pattern</h2>
+                    <div class="flex gap-2">
+                        <button id="clearBtn" class="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition">
+                            <i class="fas fa-eraser mr-1"></i>Clear
+                        </button>
+                        <button id="saveBtn" class="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition">
+                            <i class="fas fa-download mr-1"></i>Save
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Canvas Container -->
+                <div class="border-2 border-gray-200 rounded-lg p-4 bg-gray-50">
+                    <svg id="coloringCanvas" width="100%" height="500" viewBox="0 0 400 400" class="bg-white rounded cursor-pointer">
+                        <!-- Mandala Pattern -->
+                        <g id="mandalaPattern" class="coloring-pattern">
+                            <!-- Center circle -->
+                            <circle cx="200" cy="200" r="20" fill="none" stroke="#333" stroke-width="2" class="colorable"/>
+                            
+                            <!-- Inner petals -->
+                            <g class="inner-petals">
+                                <path d="M200,180 Q220,160 240,180 Q220,200 200,180" fill="none" stroke="#333" stroke-width="2" class="colorable"/>
+                                <path d="M220,200 Q240,220 220,240 Q200,220 220,200" fill="none" stroke="#333" stroke-width="2" class="colorable"/>
+                                <path d="M200,220 Q180,240 160,220 Q180,200 200,220" fill="none" stroke="#333" stroke-width="2" class="colorable"/>
+                                <path d="M180,200 Q160,180 180,160 Q200,180 180,200" fill="none" stroke="#333" stroke-width="2" class="colorable"/>
+                            </g>
+                            
+                            <!-- Outer ring -->
+                            <circle cx="200" cy="200" r="80" fill="none" stroke="#333" stroke-width="2" class="colorable"/>
+                            
+                            <!-- Outer petals -->
+                            <g class="outer-petals">
+                                <ellipse cx="200" cy="120" rx="15" ry="30" fill="none" stroke="#333" stroke-width="2" class="colorable"/>
+                                <ellipse cx="256" cy="144" rx="15" ry="30" fill="none" stroke="#333" stroke-width="2" class="colorable" transform="rotate(45 256 144)"/>
+                                <ellipse cx="280" cy="200" rx="15" ry="30" fill="none" stroke="#333" stroke-width="2" class="colorable" transform="rotate(90 280 200)"/>
+                                <ellipse cx="256" cy="256" rx="15" ry="30" fill="none" stroke="#333" stroke-width="2" class="colorable" transform="rotate(135 256 256)"/>
+                                <ellipse cx="200" cy="280" rx="15" ry="30" fill="none" stroke="#333" stroke-width="2" class="colorable" transform="rotate(180 200 280)"/>
+                                <ellipse cx="144" cy="256" rx="15" ry="30" fill="none" stroke="#333" stroke-width="2" class="colorable" transform="rotate(225 144 256)"/>
+                                <ellipse cx="120" cy="200" rx="15" ry="30" fill="none" stroke="#333" stroke-width="2" class="colorable" transform="rotate(270 120 200)"/>
+                                <ellipse cx="144" cy="144" rx="15" ry="30" fill="none" stroke="#333" stroke-width="2" class="colorable" transform="rotate(315 144 144)"/>
+                            </g>
+                        </g>
+                        
+                        <!-- Flower Pattern (hidden initially) -->
+                        <g id="flowerPattern" class="coloring-pattern" style="display: none;">
+                            <circle cx="200" cy="200" r="25" fill="none" stroke="#333" stroke-width="2" class="colorable"/>
+                            <path d="M200,175 Q175,150 150,175 Q175,200 200,175" fill="none" stroke="#333" stroke-width="2" class="colorable"/>
+                            <path d="M225,200 Q250,175 275,200 Q250,225 225,200" fill="none" stroke="#333" stroke-width="2" class="colorable"/>
+                            <path d="M200,225 Q225,250 250,225 Q225,200 200,225" fill="none" stroke="#333" stroke-width="2" class="colorable"/>
+                            <path d="M175,200 Q150,225 125,200 Q150,175 175,200" fill="none" stroke="#333" stroke-width="2" class="colorable"/>
+                            <path d="M185,185 Q160,160 135,185 Q160,210 185,185" fill="none" stroke="#333" stroke-width="2" class="colorable"/>
+                            <path d="M215,185 Q240,160 265,185 Q240,210 215,185" fill="none" stroke="#333" stroke-width="2" class="colorable"/>
+                            <path d="M215,215 Q240,240 265,215 Q240,190 215,215" fill="none" stroke="#333" stroke-width="2" class="colorable"/>
+                            <path d="M185,215 Q160,240 135,215 Q160,190 185,215" fill="none" stroke="#333" stroke-width="2" class="colorable"/>
+                        </g>
+                        
+                        <!-- Nature Scene Pattern (hidden initially) -->
+                        <g id="naturePattern" class="coloring-pattern" style="display: none;">
+                            <!-- Tree trunk -->
+                            <rect x="190" y="250" width="20" height="100" fill="none" stroke="#333" stroke-width="2" class="colorable"/>
+                            <!-- Tree crown -->
+                            <circle cx="200" cy="230" r="50" fill="none" stroke="#333" stroke-width="2" class="colorable"/>
+                            <!-- Leaves -->
+                            <circle cx="170" cy="210" r="20" fill="none" stroke="#333" stroke-width="2" class="colorable"/>
+                            <circle cx="230" cy="210" r="20" fill="none" stroke="#333" stroke-width="2" class="colorable"/>
+                            <circle cx="200" cy="190" r="15" fill="none" stroke="#333" stroke-width="2" class="colorable"/>
+                            <!-- Ground -->
+                            <path d="M50,350 Q200,330 350,350" fill="none" stroke="#333" stroke-width="2" class="colorable"/>
+                            <!-- Flowers -->
+                            <circle cx="120" cy="340" r="8" fill="none" stroke="#333" stroke-width="2" class="colorable"/>
+                            <circle cx="280" cy="345" r="8" fill="none" stroke="#333" stroke-width="2" class="colorable"/>
+                            <!-- Sun -->
+                            <circle cx="320" cy="80" r="30" fill="none" stroke="#333" stroke-width="2" class="colorable"/>
+                            <!-- Sun rays -->
+                            <line x1="320" y1="40" x2="320" y2="20" stroke="#333" stroke-width="2" class="colorable"/>
+                            <line x1="350" y1="50" x2="365" y2="35" stroke="#333" stroke-width="2" class="colorable"/>
+                            <line x1="360" y1="80" x2="380" y2="80" stroke="#333" stroke-width="2" class="colorable"/>
+                        </g>
+                    </svg>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="space-y-6">
+            <!-- Color Palette -->
+            <div class="bg-white rounded-xl shadow-sm p-6">
+                <h3 class="text-lg font-semibold text-gray-800 mb-4">
+                    <i class="fas fa-palette text-purple-500 mr-2"></i>Colors
+                </h3>
+                <div class="grid grid-cols-4 gap-2" id="colorPalette">
+                    <div class="color-option w-10 h-10 rounded-full cursor-pointer border-4 border-purple-500" style="background-color: #ff6b6b;" data-color="#ff6b6b"></div>
+                    <div class="color-option w-10 h-10 rounded-full cursor-pointer border-2 border-gray-300" style="background-color: #4ecdc4;" data-color="#4ecdc4"></div>
+                    <div class="color-option w-10 h-10 rounded-full cursor-pointer border-2 border-gray-300" style="background-color: #45b7d1;" data-color="#45b7d1"></div>
+                    <div class="color-option w-10 h-10 rounded-full cursor-pointer border-2 border-gray-300" style="background-color: #96ceb4;" data-color="#96ceb4"></div>
+                    <div class="color-option w-10 h-10 rounded-full cursor-pointer border-2 border-gray-300" style="background-color: #feca57;" data-color="#feca57"></div>
+                    <div class="color-option w-10 h-10 rounded-full cursor-pointer border-2 border-gray-300" style="background-color: #ff9ff3;" data-color="#ff9ff3"></div>
+                    <div class="color-option w-10 h-10 rounded-full cursor-pointer border-2 border-gray-300" style="background-color: #54a0ff;" data-color="#54a0ff"></div>
+                    <div class="color-option w-10 h-10 rounded-full cursor-pointer border-2 border-gray-300" style="background-color: #5f27cd;" data-color="#5f27cd"></div>
+                    <div class="color-option w-10 h-10 rounded-full cursor-pointer border-2 border-gray-300" style="background-color: #00d2d3;" data-color="#00d2d3"></div>
+                    <div class="color-option w-10 h-10 rounded-full cursor-pointer border-2 border-gray-300" style="background-color: #ff6348;" data-color="#ff6348"></div>
+                    <div class="color-option w-10 h-10 rounded-full cursor-pointer border-2 border-gray-300" style="background-color: #2ed573;" data-color="#2ed573"></div>
+                    <div class="color-option w-10 h-10 rounded-full cursor-pointer border-2 border-gray-300" style="background-color: #1e3799;" data-color="#1e3799"></div>
+                </div>
+            </div>
+
+            <!-- Pattern Selection -->
+            <div class="bg-white rounded-xl shadow-sm p-6">
+                <h3 class="text-lg font-semibold text-gray-800 mb-4">
+                    <i class="fas fa-shapes text-blue-500 mr-2"></i>Patterns
+                </h3>
+                <div class="space-y-2">
+                    <button class="pattern-btn w-full p-3 text-left rounded-lg bg-purple-50 border-2 border-purple-500" data-pattern="mandala">
+                        <i class="fas fa-circle-notch mr-2"></i>Mandala
+                    </button>
+                    <button class="pattern-btn w-full p-3 text-left rounded-lg bg-gray-50 border-2 border-gray-200 hover:bg-gray-100" data-pattern="flower">
+                        <i class="fas fa-seedling mr-2"></i>Flower
+                    </button>
+                    <button class="pattern-btn w-full p-3 text-left rounded-lg bg-gray-50 border-2 border-gray-200 hover:bg-gray-100" data-pattern="nature">
+                        <i class="fas fa-tree mr-2"></i>Nature Scene
+                    </button>
+                </div>
+            </div>
+
+            <!-- Timer -->
+            <div class="bg-white rounded-xl shadow-sm p-6">
+                <h3 class="text-lg font-semibold text-gray-800 mb-4">
+                    <i class="fas fa-clock text-green-500 mr-2"></i>Timer
+                </h3>
+                <div class="text-center">
+                    <div class="text-3xl font-bold text-purple-600 mb-4" id="timer">00:00</div>
+                    <div class="flex gap-2">
+                        <button id="startTimer" class="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition text-sm">
+                            <i class="fas fa-play mr-1"></i>Start
+                        </button>
+                        <button id="pauseTimer" class="bg-yellow-500 text-white px-4 py-2 rounded-lg hover:bg-yellow-600 transition text-sm" style="display: none;">
+                            <i class="fas fa-pause mr-1"></i>Pause
+                        </button>
+                        <button id="resetTimer" class="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition text-sm">
+                            <i class="fas fa-stop mr-1"></i>Reset
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Progress -->
+            <div class="bg-white rounded-xl shadow-sm p-6">
+                <h3 class="text-lg font-semibold text-gray-800 mb-4">
+                    <i class="fas fa-chart-pie text-orange-500 mr-2"></i>Progress
+                </h3>
+                <div class="space-y-3">
+                    <div class="flex justify-between">
+                        <span class="text-sm text-gray-600">Colored Areas:</span>
+                        <span class="text-sm font-bold text-purple-600" id="coloredCount">0</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-sm text-gray-600">Total Areas:</span>
+                        <span class="text-sm font-bold text-blue-600" id="totalAreas">0</span>
+                    </div>
+                    <div class="bg-gray-200 rounded-full h-3">
+                        <div class="bg-gradient-to-r from-purple-500 to-blue-500 h-3 rounded-full transition-all duration-300" id="progressBar" style="width: 0%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+class ColoringGame {
+    constructor() {
+        this.currentColor = '#ff6b6b';
+        this.currentPattern = 'mandala';
+        this.coloredElements = new Set();
+        this.timerInterval = null;
+        this.seconds = 0;
+        this.isTimerRunning = false;
+        
+        this.initializeElements();
+        this.bindEvents();
+        this.updateProgress();
+    }
+    
+    initializeElements() {
+        this.canvas = document.getElementById('coloringCanvas');
+        this.colorPalette = document.getElementById('colorPalette');
+        this.patternButtons = document.querySelectorAll('.pattern-btn');
+        this.timer = document.getElementById('timer');
+        this.startTimerBtn = document.getElementById('startTimer');
+        this.pauseTimerBtn = document.getElementById('pauseTimer');
+        this.resetTimerBtn = document.getElementById('resetTimer');
+        this.clearBtn = document.getElementById('clearBtn');
+        this.saveBtn = document.getElementById('saveBtn');
+    }
+    
+    bindEvents() {
+        // Color selection
+        this.colorPalette.addEventListener('click', (e) => {
+            if (e.target.classList.contains('color-option')) {
+                this.selectColor(e.target);
+            }
+        });
+        
+        // Pattern selection
+        this.patternButtons.forEach(btn => {
+            btn.addEventListener('click', () => this.selectPattern(btn.dataset.pattern));
+        });
+        
+        // Canvas coloring
+        this.canvas.addEventListener('click', (e) => {
+            if (e.target.classList.contains('colorable')) {
+                this.colorElement(e.target);
+            }
+        });
+        
+        // Timer controls
+        this.startTimerBtn.addEventListener('click', () => this.startTimer());
+        this.pauseTimerBtn.addEventListener('click', () => this.pauseTimer());
+        this.resetTimerBtn.addEventListener('click', () => this.resetTimer());
+        
+        // Clear and save
+        this.clearBtn.addEventListener('click', () => this.clearCanvas());
+        this.saveBtn.addEventListener('click', () => this.saveImage());
+    }
+    
+    selectColor(colorElement) {
+        // Remove selection from all colors
+        document.querySelectorAll('.color-option').forEach(el => {
+            el.classList.remove('border-purple-500');
+            el.classList.add('border-gray-300');
+        });
+        
+        // Select new color
+        colorElement.classList.remove('border-gray-300');
+        colorElement.classList.add('border-purple-500');
+        this.currentColor = colorElement.dataset.color;
+    }
+    
+    selectPattern(pattern) {
+        // Hide all patterns
+        document.querySelectorAll('.coloring-pattern').forEach(el => {
+            el.style.display = 'none';
+        });
+        
+        // Show selected pattern
+        document.getElementById(pattern + 'Pattern').style.display = 'block';
+        
+        // Update button styles
+        this.patternButtons.forEach(btn => {
+            btn.classList.remove('bg-purple-50', 'border-purple-500');
+            btn.classList.add('bg-gray-50', 'border-gray-200');
+        });
+        
+        document.querySelector(`[data-pattern="${pattern}"]`).classList.remove('bg-gray-50', 'border-gray-200');
+        document.querySelector(`[data-pattern="${pattern}"]`).classList.add('bg-purple-50', 'border-purple-500');
+        
+        this.currentPattern = pattern;
+        this.updatePatternTitle();
+        this.updateProgress();
+        this.coloredElements.clear();
+    }
+    
+    updatePatternTitle() {
+        const titles = {
+            mandala: 'Mandala Pattern',
+            flower: 'Flower Pattern',
+            nature: 'Nature Scene'
+        };
+        document.getElementById('patternTitle').textContent = titles[this.currentPattern];
+    }
+    
+    colorElement(element) {
+        element.setAttribute('fill', this.currentColor);
+        this.coloredElements.add(element);
+        this.updateProgress();
+        
+        // Start timer if not running
+        if (!this.isTimerRunning && this.coloredElements.size === 1) {
+            this.startTimer();
+        }
+    }
+    
+    updateProgress() {
+        const currentPattern = document.getElementById(this.currentPattern + 'Pattern');
+        const totalElements = currentPattern.querySelectorAll('.colorable').length;
+        const coloredCount = this.coloredElements.size;
+        
+        document.getElementById('coloredCount').textContent = coloredCount;
+        document.getElementById('totalAreas').textContent = totalElements;
+        
+        const progress = totalElements > 0 ? (coloredCount / totalElements) * 100 : 0;
+        document.getElementById('progressBar').style.width = progress + '%';
+        
+        // Show completion message
+        if (progress === 100) {
+            setTimeout(() => {
+                alert('🎉 Congratulations! You completed the coloring pattern!');
+            }, 500);
+        }
+    }
+    
+    startTimer() {
+        if (!this.isTimerRunning) {
+            this.isTimerRunning = true;
+            this.startTimerBtn.style.display = 'none';
+            this.pauseTimerBtn.style.display = 'inline-block';
+            
+            this.timerInterval = setInterval(() => {
+                this.seconds++;
+                this.updateTimerDisplay();
+            }, 1000);
+        }
+    }
+    
+    pauseTimer() {
+        this.isTimerRunning = false;
+        clearInterval(this.timerInterval);
+        this.startTimerBtn.style.display = 'inline-block';
+        this.pauseTimerBtn.style.display = 'none';
+    }
+    
+    resetTimer() {
+        this.isTimerRunning = false;
+        clearInterval(this.timerInterval);
+        this.seconds = 0;
+        this.updateTimerDisplay();
+        this.startTimerBtn.style.display = 'inline-block';
+        this.pauseTimerBtn.style.display = 'none';
+    }
+    
+    updateTimerDisplay() {
+        const minutes = Math.floor(this.seconds / 60);
+        const secs = this.seconds % 60;
+        this.timer.textContent = `${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+    }
+    
+    clearCanvas() {
+        document.querySelectorAll('.colorable').forEach(el => {
+            el.removeAttribute('fill');
+        });
+        this.coloredElements.clear();
+        this.updateProgress();
+    }
+    
+    saveImage() {
+        const svgData = new XMLSerializer().serializeToString(this.canvas);
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        const img = new Image();
+        
+        canvas.width = 400;
+        canvas.height = 400;
+        
+        img.onload = () => {
+            ctx.fillStyle = 'white';
+            ctx.fillRect(0, 0, 400, 400);
+            ctx.drawImage(img, 0, 0);
+            
+            const link = document.createElement('a');
+            link.download = `mindful-coloring-${this.currentPattern}-${Date.now()}.png`;
+            link.href = canvas.toDataURL();
+            link.click();
+        };
+        
+        img.src = 'data:image/svg+xml;base64,' + btoa(svgData);
+    }
+}
+
+// Initialize coloring game when page loads
+document.addEventListener('DOMContentLoaded', () => {
+    new ColoringGame();
+});
+</script>
+{% endblock %}

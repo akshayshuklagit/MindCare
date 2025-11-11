@@ -1,0 +1,229 @@
+{% extends 'base.html' %}
+
+{% block title %}Taking {{ assessment_type.name }} - MindCare{% endblock %}
+
+{% block extra_css %}
+<style>
+    .question-card {
+        transition: all 0.3s ease;
+    }
+    .progress-bar {
+        transition: width 0.5s ease;
+    }
+    .radio-custom {
+        appearance: none;
+        border: 2px solid #d1d5db;
+        border-radius: 50%;
+        width: 20px;
+        height: 20px;
+        position: relative;
+        cursor: pointer;
+    }
+    .radio-custom:checked {
+        border-color: #3b82f6;
+        background-color: #3b82f6;
+    }
+    .radio-custom:checked::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background-color: white;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto">
+    <!-- Progress Header -->
+    <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
+        <div class="flex items-center justify-between mb-4">
+            <div>
+                <h1 class="text-2xl font-bold text-gray-900">{{ assessment_type.name }}</h1>
+                <p class="text-gray-600">{{ assessment_type.short_name }} Assessment</p>
+            </div>
+            <div class="text-right">
+                <p class="text-sm text-gray-500">Progress</p>
+                <p class="text-lg font-semibold text-blue-600"><span id="current-question">1</span> of {{ total_questions }}</p>
+            </div>
+        </div>
+        
+        <!-- Progress Bar -->
+        <div class="w-full bg-gray-200 rounded-full h-3">
+            <div class="progress-bar bg-blue-600 h-3 rounded-full" id="progress-bar" style="width: {% widthratio current_question_index total_questions 100 %}%"></div>
+        </div>
+    </div>
+
+    <!-- Instructions -->
+    <div class="bg-blue-50 border-l-4 border-blue-400 p-4 rounded-r-lg mb-8">
+        <div class="flex">
+            <div class="flex-shrink-0">
+                <i class="fas fa-info-circle text-blue-400"></i>
+            </div>
+            <div class="ml-3">
+                <p class="text-blue-800">{{ assessment_type.instruction }}</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Assessment Form -->
+    <form method="post" id="assessment-form" class="space-y-8">
+        {% csrf_token %}
+        <input type="hidden" name="assessment_id" value="{{ assessment.id }}">
+        
+        {% for question in questions %}
+        <div class="question-card bg-white rounded-xl shadow-lg p-6" data-question="{{ forloop.counter }}">
+            <div class="mb-6">
+                <h2 class="text-xl font-semibold text-gray-900 mb-2">
+                    Question {{ forloop.counter }}
+                </h2>
+                <p class="text-gray-700 leading-relaxed">{{ question.question_text }}</p>
+            </div>
+            
+            <div class="space-y-3">
+                {% for choice in question.answer_choices.all %}
+                <label class="flex items-center p-4 border border-gray-200 rounded-lg hover:border-blue-300 hover:bg-blue-50 cursor-pointer transition duration-300">
+                    <input type="radio" 
+                           name="question_{{ question.id }}" 
+                           value="{{ choice.id }}" 
+                           class="radio-custom mr-4"
+                           required>
+                    <span class="text-gray-800">{{ choice.choice_text }}</span>
+                </label>
+                {% endfor %}
+            </div>
+        </div>
+        {% empty %}
+        <div class="text-center py-12">
+            <i class="fas fa-exclamation-triangle text-yellow-500 text-4xl mb-4"></i>
+            <h3 class="text-xl font-semibold text-gray-600 mb-2">No Questions Available</h3>
+            <p class="text-gray-500">This assessment doesn't have any active questions.</p>
+            <a href="{% url 'assessments:list' %}" class="mt-4 inline-block bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg transition duration-300">
+                Back to Assessments
+            </a>
+        </div>
+        {% endfor %}
+        
+        {% if questions %}
+        <!-- Submit Section -->
+        <div class="bg-white rounded-xl shadow-lg p-6">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-900 mb-2">Ready to Submit?</h3>
+                    <p class="text-gray-600">Make sure you've answered all questions honestly.</p>
+                </div>
+                <button type="submit" 
+                        class="bg-green-600 hover:bg-green-700 text-white px-8 py-4 rounded-lg font-semibold text-lg transition duration-300 transform hover:scale-105 shadow-lg"
+                        id="submit-button">
+                    <i class="fas fa-paper-plane mr-2"></i>
+                    Get My Results
+                </button>
+            </div>
+        </div>
+        {% endif %}
+    </form>
+
+    <!-- Navigation Help -->
+    {% if questions %}
+    <div class="mt-8 bg-gray-50 rounded-xl p-6">
+        <div class="flex items-center justify-between text-sm text-gray-600">
+            <div class="flex items-center">
+                <i class="fas fa-lightbulb text-yellow-500 mr-2"></i>
+                <span>Take your time and answer honestly for the most accurate results.</span>
+            </div>
+            <div class="flex items-center space-x-4">
+                <span>Estimated time: {{ assessment_type.estimated_time }} minutes</span>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('assessment-form');
+    const submitButton = document.getElementById('submit-button');
+    const totalQuestions = {{ total_questions }};
+    
+    if (form && submitButton) {
+        // Track progress
+        function updateProgress() {
+            const answeredQuestions = form.querySelectorAll('input[type="radio"]:checked').length;
+            const progressBar = document.getElementById('progress-bar');
+            const currentQuestionSpan = document.getElementById('current-question');
+            
+            if (progressBar && currentQuestionSpan) {
+                const percentage = (answeredQuestions / totalQuestions) * 100;
+                progressBar.style.width = percentage + '%';
+                currentQuestionSpan.textContent = Math.min(answeredQuestions + 1, totalQuestions);
+            }
+            
+            // Enable submit button when all questions are answered
+            submitButton.disabled = answeredQuestions < totalQuestions;
+            if (answeredQuestions === totalQuestions) {
+                submitButton.classList.remove('opacity-50', 'cursor-not-allowed');
+                submitButton.classList.add('shadow-lg');
+            } else {
+                submitButton.classList.add('opacity-50', 'cursor-not-allowed');
+                submitButton.classList.remove('shadow-lg');
+            }
+        }
+        
+        // Initialize progress
+        updateProgress();
+        
+        // Listen for radio button changes
+        form.addEventListener('change', function(e) {
+            if (e.target.type === 'radio') {
+                updateProgress();
+                
+                // Add visual feedback for selected option
+                const labels = e.target.closest('.space-y-3').querySelectorAll('label');
+                labels.forEach(label => {
+                    label.classList.remove('border-blue-500', 'bg-blue-100');
+                    label.classList.add('border-gray-200');
+                });
+                
+                e.target.closest('label').classList.remove('border-gray-200');
+                e.target.closest('label').classList.add('border-blue-500', 'bg-blue-100');
+            }
+        });
+        
+        // Form submission
+        form.addEventListener('submit', function(e) {
+            const answeredQuestions = form.querySelectorAll('input[type="radio"]:checked').length;
+            
+            if (answeredQuestions < totalQuestions) {
+                e.preventDefault();
+                alert('Please answer all questions before submitting.');
+                return;
+            }
+            
+            // Show loading state
+            submitButton.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Processing...';
+            submitButton.disabled = true;
+        });
+    }
+    
+    // Auto-save functionality (optional)
+    let autoSaveTimer;
+    function autoSave() {
+        clearTimeout(autoSaveTimer);
+        autoSaveTimer = setTimeout(() => {
+            // Could implement auto-save to session storage here
+            console.log('Auto-save triggered');
+        }, 5000);
+    }
+    
+    if (form) {
+        form.addEventListener('change', autoSave);
+    }
+});
+</script>
+{% endblock %}
