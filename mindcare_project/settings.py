@@ -108,12 +108,20 @@ WSGI_APPLICATION = 'mindcare_project.wsgi.application'
 #     }
 # }
 
+# DATABASES = {
+#     'default': dj_database_url.config(
+#         default=env('DATABASE_URL', default='sqlite:///db.sqlite3'),
+#         conn_max_age=600,
+#     )
+# }
+
+
 DATABASES = {
     'default': dj_database_url.config(
-        default=env('DATABASE_URL', default='sqlite:///db.sqlite3'),
-        conn_max_age=600,
+        default=env('DATABASE_URL', default='postgres://user:password@localhost:5432/mindcare')
     )
 }
+
 
 
 # Password validation
@@ -223,42 +231,12 @@ if not DEBUG:
 AUTH_USER_MODEL = 'accounts.CustomUser'
 
 # Logging Configuration
-# LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'formatters': {
-        'verbose': {
-            'format': '{levelname} {asctime} {module} {process:d} {thread:d} {message}',
-            'style': '{',
-        },
-    },
-    'handlers': {
-        'file': {
-            'level': 'INFO',
-            'class': 'logging.FileHandler',
-            'filename': BASE_DIR / 'logs' / 'mindcare.log',
-            'formatter': 'verbose',
-        },
-        'console': {
-            'level': 'DEBUG',
-            'class': 'logging.StreamHandler',
-            'formatter': 'verbose',
-        },
-    },
-    'loggers': {
-        'django': {
-            'handlers': ['console', 'file'],
-            'level': 'INFO',
-        },
-        'mindcare': {
-            'handlers': ['console', 'file'],
-            'level': 'DEBUG',
-            'propagate': False,
-        },
-    },
-}
+LOG_DIR = os.path.join(BASE_DIR, 'logs')
+os.makedirs(LOG_DIR, exist_ok=True)
+
+
 LOGGING = {
-    'version': 1,
+    'version':1,
     'disable_existing_loggers': False,
     'formatters': {
         'verbose': {
@@ -276,7 +254,7 @@ LOGGING = {
             'level': 'INFO',
             'class': 'logging.FileHandler',
             # Use /tmp/ instead of BASE_DIR/logs to avoid write permission issues on Railway
-            'filename': '/tmp/mindcare.log',
+            'filename': os.path.join(LOG_DIR, 'mindcare.log'),
             'formatter': 'verbose',
         },
     },
